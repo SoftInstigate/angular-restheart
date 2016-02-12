@@ -1,0 +1,24 @@
+{
+  "name": "angular-restheart-restangular",
+  "main": "angular-restheart-restangular.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/SoftInstigate/angular-restheart-restangular",
+  "authors": [
+    "SoftInstigate"
+  ],
+  "description": "angular module for configuring restangular with restheart",
+  "keywords": [
+    "restheart",
+    "angular",
+    "authentication"
+  ],
+  "license": "MIT",
+  "location": "git@github.com/SoftInstigate/angular-restheart-restangular.git",
+  "ignore": [],
+  "dependencies": {
+    "angular": "*",
+    "restangular": "~1.4.0",
+    "angular-local-storage": "0.1.4",
+    "angular-restheart-auth": "~0.0.1"
+  }
+}
