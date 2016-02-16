@@ -1,0 +1,27 @@
+<div class="signin padder">
+    <div class="container w-xxl w-auto-xs">
+        <div class="navbar-brand block m-t text-3x m-b-lg" ng-bind="app.name"></div>
+        <div class="m-b">
+
+            <form name="form" class="form-validation">
+                <div class="m-b text-center" >
+                </div>
+                <div class="list-group list-group-sm">
+                    <div class="list-group-item">
+                        <input type="text" placeholder="Email" class="form-control no-border" ng-model="user.email" required>
+                    </div>
+                    <div class="list-group-item">
+                        <input type="password" placeholder="Password" class="form-control no-border" ng-model="user.password" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-lg btn-primary btn-block" ng-click="signin()" >Sign In</button>
+            </form>
+        </div>
+        <p class="text-center m-t-lg">
+            <small class="text-muted footer">
+                <a href="http://www.softinstigate.com/" target="_blank">SoftInstigate</a>
+            </small>
+        </p>
+    </div>
+
+</div>
