@@ -1,7 +1,3 @@
-/**
- * Created by ricky on 2/10/16.
- */
-
 var module = angular.module('restheartRestangular', []);
 
 module.config(['localStorageServiceProvider', 'RestangularProvider',
@@ -11,7 +7,6 @@ module.config(['localStorageServiceProvider', 'RestangularProvider',
             id: "_id",
             etag: "_etag",
             selfLink: "_links['self'].href"
-            //parentResource: "_links['XXXX'].href" XXXX= rh:bucket | rh:coll
         });
         RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
             var extractedData;
@@ -47,9 +42,139 @@ module.config(['localStorageServiceProvider', 'RestangularProvider',
         });
     }])
 
+
+module.provider('restheartRestangular', function () {
+
+    this.setOnForbidden = function (f) {
+        this.onForbidden = f;
+    };
+
+    this.setOnTokenExpired = function (f) {
+        this.onTokenExpired = f;
+    };
+
+    this.setOnUnauthenticated = function (f) {
+        this.onUnauthenticated = f;
+    };
+
+    this.$get = function () {
+        return this;
+    };
+
+})
+
+
+module.service('AuthService', ['$base64', '$http', 'localStorageService', 'AppLogicRestangular', '$q', 'restheartRestangular', 'ApiRestangular',
+    function ($base64, $http, localStorageService, AppLogicRestangular, $q, restheartRestangular, ApiRestangular) {
+
+        this.setAuthHeaderFromLS = function () {
+            var token = localStorageService.get('authtoken');
+            if (angular.isDefined(token) && token !== null) {
+                $http.defaults.headers.common["Authorization"] = 'Basic ' + localStorageService.get('authtoken');
+            }
+        };
+
+        this.setAuthHeader = function (userid, password) {
+            $http.defaults.headers.common["Authorization"] = 'Basic ' + $base64.encode(userid + ":" + password);
+        };
+
+        this.saveAuthInfo = function (userid, password, roles) {
+            var header = $base64.encode(userid + ":" + password);
+            localStorageService.set('userid', userid);
+            localStorageService.set('authtoken', header);
+            //localStorageService.set('nav', $base64.encode(JSON.stringify(roles)));
+            return header;
+        };
+
+        this.clearAuthInfo = function () {
+            var restheartUrl = localStorageService.get('restheartUrl');
+            var redirected = localStorageService.get('redirected');
+
+            localStorageService.clearAll();
+
+            // avoid restheartUrl to be deleted
+            localStorageService.set('restheartUrl', restheartUrl);
+
+            // avoid redirected to be deleted
+            localStorageService.set('redirected', redirected);
+
+            if (!angular.isUndefined($http) && !angular.isUndefined($http.defaults)) {
+                delete $http.defaults.headers.common["Authorization"];
+            }
+        };
+
+        this.getSavedAuthHeader = function () {
+            return localStorageService.get('authtoken');
+        };
+
+        this.getSavedUserid = function () {
+            return localStorageService.get('userid');
+        };
+
+        this.getSavedUserRoles = function () {
+            var _nav = localStorageService.get('nav');
+            return JSON.parse($base64.decode(_nav));
+        };
+
+        this.isAuthenticated = function () {
+            var authHeader = this.getSavedAuthHeader(localStorageService);
+            return !(angular.isUndefined(authHeader) || authHeader === null);
+        };
+
+        this.signin = function (id, password) {
+            var that = this;
+            return $q(function (resolve, reject) {
+                that.clearAuthInfo();
+                that.setAuthHeader(id, password);
+                var apiOptions = {
+                    nocache: new Date().getTime()
+                };
+
+                AppLogicRestangular.one('roles', id)
+                    .get(apiOptions)
+                    .then(function (userRoles) {
+                        var authToken = userRoles.headers('Auth-Token');
+                        if (authToken === null) {
+                            that.clearAuthInfo();
+                            resolve(false);
+                        }
+                        that.saveAuthInfo(id, authToken, userRoles.data.roles);
+                        that.setAuthHeader(id, authToken);
+                        resolve(true);
+
+                    },
+                    function errorCallback(response) {
+                        that.clearAuthInfo();
+                        resolve(false);
+
+                    });
+            })
+        };
+
+        this.signout = function (removeTokenFromDB) {
+            var that = this;
+            return $q(function (resolve, reject) {
+                if (removeTokenFromDB) {
+                    var userid = localStorageService.get('userid');
+                    ApiRestangular.one('_authtokens', userid).remove().then(function () {
+                        that.clearAuthInfo();
+                        resolve(true);
+                    }, function errorCallback(response) {
+                        that.clearAuthInfo();
+                        resolve(false);
+                    });
+                }
+                else {
+                    this.clearAuthInfo();
+                    resolve(true);
+                }
+            })
+        }
+    }]);
+
 // Restangular service for authentication
-module.factory('AppLogicRestangular', ['Restangular', 'localStorageService', '$location',
-    function (Restangular, localStorageService, $location) {
+module.factory('AppLogicRestangular', ['Restangular', 'localStorageService', '$location', 'restheartRestangular',
+    function (Restangular, localStorageService, $location, restheartRestangular) {
         return Restangular.withConfig(function (RestangularConfigurer) {
             RestangularConfigurer.setFullResponse(true);
             var baseUrl = localStorageService.get("restheartLogicUrl");
@@ -62,19 +187,39 @@ module.factory('AppLogicRestangular', ['Restangular', 'localStorageService', '$l
                 RestangularConfigurer.setBaseUrl(_restheartUrl);
 
             }
+            RestangularConfigurer.setErrorInterceptor(function (response, deferred, responseHandler) {
+                // check if session expired
+                var f = handleUnauthenticated(response);
+                return !f; // if handled --> false
+            });
+
+            function handleUnauthenticated(response) {
+                if (response.status === 401) {
+                    localStorageService.set('Error 401', {
+                        'why': 'wrong credentials',
+                        'from': $location.path()
+                    });
+                    restheartRestangular.onUnauthenticated();
+                    return true; // handled
+                }
+
+                return false; // not handled
+            }
         });
     }])
 
 // Restangular service for API calling
 // also handles auth token expiration
-module.factory('ApiRestangular', ['Restangular', 'AuthService', '$state', '$stateParams', 'localStorageService', '$location',
-    function (Restangular, AuthService, $state, $stateParams, localStorageService, $location) {
+module.factory('ApiRestangular', ['Restangular', 'localStorageService', '$location', 'restheartRestangular', '$http',
+    function (Restangular, localStorageService, $location, restheartRestangular, $http) {
         return Restangular.withConfig(function (RestangularConfigurer) {
+
             var baseUrl = localStorageService.get("restheartUrl");
 
             if (angular.isDefined(baseUrl) && baseUrl !== null) {
                 RestangularConfigurer.setBaseUrl(baseUrl);
-            } else {
+            }
+            else {
                 var _restheartUrl;
                 _restheartUrl = "http://" + $location.host() + ":8080";
                 localStorageService.set("restheartUrl", _restheartUrl);
@@ -88,36 +233,51 @@ module.factory('ApiRestangular', ['Restangular', 'AuthService', '$state', '$stat
                 var f = handleForbidden(response);
                 return !(te || f); // if handled --> false
             });
+
             RestangularConfigurer.setRequestInterceptor(function (elem, operation) {
-                AuthService.setAuthHeaderFromLS();
+                setAuthHeaderFromLS();
                 return elem;
             });
 
+            function setAuthHeaderFromLS() {
+                var token = localStorageService.get('authtoken');
+                if (angular.isDefined(token) && token !== null) {
+                    $http.defaults.headers.common["Authorization"] = 'Basic ' + localStorageService.get('authtoken');
+                }
+            };
+
             function handleTokenExpiration(response) {
-                if (response.status === 401 && AuthService.isAuthenticated()) {
+                var token = localStorageService.get('authtoken');
+                if (response.status === 401 && angular.isDefined(token) && token !== null) {
+                    //if (response.status === 401 && AuthService.isAuthenticated()) {
                     // UNAUTHORIZED but signed in => auth token expired
-                    AuthService.clearAuthInfo();
-                    localStorageService.set('redirected', {
+                    //AuthService.clearAuthInfo();
+
+                    localStorageService.set('Error 401', {
                         "why": "expired",
-                        "from": $state.$current.toString(),
-                        "params": $stateParams
+                        "from": $location.path(),
+                        "params": routeParams
                     });
+                    restheartRestangular.onTokenExpired();
                     return true; // handled
+                } else {
+
                 }
                 return false; // not handled
             }
 
             function handleForbidden(response) {
                 if (response.status === 403) {
-                    if (AuthService.isAuthenticated()) {
-//                              console.debug("forbidden and signed in. redirecting to user page");
-                        localStorageService.set('redirected', {
+                    var token = localStorageService.get('authtoken');
+                    if (angular.isDefined(token) && token !== null) {
+                        localStorageService.set('Error 403', {
                             'why': 'forbidden',
-                            'from': $state.$current.toString()
+                            'from': $location.path()
                         });
+                        restheartRestangular.onForbidden();
 
                     } else {
-                             console.debug("forbidden and not logged in. redirecting to signin page");
+                        restheartRestangular.Unauthenticated();
                     }
 
                     return true; // handled
@@ -126,7 +286,7 @@ module.factory('ApiRestangular', ['Restangular', 'AuthService', '$state', '$stat
                 return false; // not handled
             }
         });
-    }])
+    }]);
 
 // Restangular service for API calling
 // with full response (also returns response headers)

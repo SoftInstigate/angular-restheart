@@ -19,6 +19,5 @@
     "angular": "*",
     "restangular": "~1.4.0",
     "angular-local-storage": "0.1.4",
-    "angular-restheart-auth": "master"
   }
 }
