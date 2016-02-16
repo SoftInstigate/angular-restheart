@@ -19,6 +19,6 @@
     "angular": "*",
     "restangular": "~1.4.0",
     "angular-local-storage": "0.1.4",
-    "angular-base64": "~2.0.3",
+    "angular-base64": "~2.0.3"
   }
 }
