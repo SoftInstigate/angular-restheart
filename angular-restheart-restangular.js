@@ -203,7 +203,7 @@ module.factory('RhLogic', ['Restangular', 'localStorageService', '$location', 'r
                         'why': 'wrong credentials',
                         'from': $location.path()
                     });
-                    RestheartRestangular.onUnauthenticated();
+                    restheart.onUnauthenticated();
                     return true; // handled
                 }
 
