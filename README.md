@@ -14,7 +14,7 @@ bower install angular-restheart-restangular
 Import the javascript component.
 
 ```html
-<script src="bower_components/angular-base64/angular-restheart-restangular.js"></script>
+<script src="bower_components/angular-restheart-restangular/angular-restheart-restangular.js"></script>
 ```
 
 Inject into your App.
