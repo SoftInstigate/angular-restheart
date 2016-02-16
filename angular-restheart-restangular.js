@@ -1,4 +1,8 @@
-var module = angular.module('restheartRestangular', []);
+var module = angular.module('restheart', [
+    'LocalStorageModule',
+    'base64',
+    'restangular'
+]);
 
 module.config(['localStorageServiceProvider', 'RestangularProvider',
     function (localStorageServiceProvider, RestangularProvider) {
@@ -7,6 +11,7 @@ module.config(['localStorageServiceProvider', 'RestangularProvider',
             id: "_id",
             etag: "_etag",
             selfLink: "_links['self'].href"
+            //parentResource: "_links['XXXX'].href" XXXX= rh:bucket | rh:coll
         });
         RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
             var extractedData;
@@ -31,8 +36,6 @@ module.config(['localStorageServiceProvider', 'RestangularProvider',
                 extractedData = data;
             }
 
-            //console.debug("**** " + JSON.stringify(extractedData, null, 2));
-
             return extractedData;
         });
         RestangularProvider.setDefaultHeaders({
@@ -42,18 +45,25 @@ module.config(['localStorageServiceProvider', 'RestangularProvider',
         });
     }])
 
+module.provider('restheart', function () {
+    
+    this.setBaseUrl = function (f) {
+        this.baseUrl = f;
+    };
 
-module.provider('restheartRestangular', function () {
+    this.setLogicBaseUrl = function (f) {
+        this.logicBaseUrl = f;
+    };
 
-    this.setOnForbidden = function (f) {
+    this.onForbidden = function (f) {
         this.onForbidden = f;
     };
 
-    this.setOnTokenExpired = function (f) {
+    this.onTokenExpired = function (f) {
         this.onTokenExpired = f;
     };
 
-    this.setOnUnauthenticated = function (f) {
+    this.onUnauthenticated = function (f) {
         this.onUnauthenticated = f;
     };
 
@@ -64,15 +74,8 @@ module.provider('restheartRestangular', function () {
 })
 
 
-module.service('AuthService', ['$base64', '$http', 'localStorageService', 'AppLogicRestangular', '$q', 'restheartRestangular', 'ApiRestangular',
-    function ($base64, $http, localStorageService, AppLogicRestangular, $q, restheartRestangular, ApiRestangular) {
-
-        this.setAuthHeaderFromLS = function () {
-            var token = localStorageService.get('authtoken');
-            if (angular.isDefined(token) && token !== null) {
-                $http.defaults.headers.common["Authorization"] = 'Basic ' + localStorageService.get('authtoken');
-            }
-        };
+module.service('RhAuth', ['$base64', '$http', 'localStorageService', 'RhLogic', '$q',  'Rh',
+    function ($base64, $http, localStorageService, RhLogic, $q, Rh) {
 
         this.setAuthHeader = function (userid, password) {
             $http.defaults.headers.common["Authorization"] = 'Basic ' + $base64.encode(userid + ":" + password);
@@ -82,7 +85,7 @@ module.service('AuthService', ['$base64', '$http', 'localStorageService', 'AppLo
             var header = $base64.encode(userid + ":" + password);
             localStorageService.set('userid', userid);
             localStorageService.set('authtoken', header);
-            //localStorageService.set('nav', $base64.encode(JSON.stringify(roles)));
+            localStorageService.set('nav', $base64.encode(JSON.stringify(roles)));
             return header;
         };
 
@@ -103,21 +106,21 @@ module.service('AuthService', ['$base64', '$http', 'localStorageService', 'AppLo
             }
         };
 
-        this.getSavedAuthHeader = function () {
+        this.getAuthHeader = function () {
             return localStorageService.get('authtoken');
         };
 
-        this.getSavedUserid = function () {
+        this.getUserid = function () {
             return localStorageService.get('userid');
         };
 
-        this.getSavedUserRoles = function () {
+        this.getUserRoles = function () {
             var _nav = localStorageService.get('nav');
             return JSON.parse($base64.decode(_nav));
         };
 
         this.isAuthenticated = function () {
-            var authHeader = this.getSavedAuthHeader(localStorageService);
+            var authHeader = this.getAuthHeader(localStorageService);
             return !(angular.isUndefined(authHeader) || authHeader === null);
         };
 
@@ -130,7 +133,7 @@ module.service('AuthService', ['$base64', '$http', 'localStorageService', 'AppLo
                     nocache: new Date().getTime()
                 };
 
-                AppLogicRestangular.one('roles', id)
+                RhLogic.one('roles', id)
                     .get(apiOptions)
                     .then(function (userRoles) {
                         var authToken = userRoles.headers('Auth-Token');
@@ -156,7 +159,7 @@ module.service('AuthService', ['$base64', '$http', 'localStorageService', 'AppLo
             return $q(function (resolve, reject) {
                 if (removeTokenFromDB) {
                     var userid = localStorageService.get('userid');
-                    ApiRestangular.one('_authtokens', userid).remove().then(function () {
+                    Rh.one('_authtokens', userid).remove().then(function () {
                         that.clearAuthInfo();
                         resolve(true);
                     }, function errorCallback(response) {
@@ -173,15 +176,16 @@ module.service('AuthService', ['$base64', '$http', 'localStorageService', 'AppLo
     }]);
 
 // Restangular service for authentication
-module.factory('AppLogicRestangular', ['Restangular', 'localStorageService', '$location', 'restheartRestangular',
-    function (Restangular, localStorageService, $location, restheartRestangular) {
+module.factory('RhLogic', ['Restangular', 'localStorageService', '$location', 'restheart',
+    function (Restangular, localStorageService, $location, restheart) {
         return Restangular.withConfig(function (RestangularConfigurer) {
             RestangularConfigurer.setFullResponse(true);
-            var baseUrl = localStorageService.get("restheartLogicUrl");
+
+            var baseUrl = restheart.logicBaseUrl;
+
             if (angular.isDefined(baseUrl) && baseUrl !== null) {
                 RestangularConfigurer.setBaseUrl(baseUrl);
-            } else {
-                //default configuration
+            } else { //default configuration
                 var _restheartUrl;
                 _restheartUrl = "http://" + $location.host() + ":8080/_logic";
                 RestangularConfigurer.setBaseUrl(_restheartUrl);
@@ -199,7 +203,7 @@ module.factory('AppLogicRestangular', ['Restangular', 'localStorageService', '$l
                         'why': 'wrong credentials',
                         'from': $location.path()
                     });
-                    restheartRestangular.onUnauthenticated();
+                    RestheartRestangular.onUnauthenticated();
                     return true; // handled
                 }
 
@@ -210,16 +214,16 @@ module.factory('AppLogicRestangular', ['Restangular', 'localStorageService', '$l
 
 // Restangular service for API calling
 // also handles auth token expiration
-module.factory('ApiRestangular', ['Restangular', 'localStorageService', '$location', 'restheartRestangular', '$http',
-    function (Restangular, localStorageService, $location, restheartRestangular, $http) {
+module.factory('Rh', ['Restangular', 'localStorageService', '$location', 'restheart', '$http',
+    function (Restangular, localStorageService, $location, restheart, $http) {
         return Restangular.withConfig(function (RestangularConfigurer) {
 
-            var baseUrl = localStorageService.get("restheartUrl");
+            var baseUrl = restheart.baseUrl;
 
             if (angular.isDefined(baseUrl) && baseUrl !== null) {
                 RestangularConfigurer.setBaseUrl(baseUrl);
             }
-            else {
+            else { //default configuration
                 var _restheartUrl;
                 _restheartUrl = "http://" + $location.host() + ":8080";
                 localStorageService.set("restheartUrl", _restheartUrl);
@@ -249,19 +253,17 @@ module.factory('ApiRestangular', ['Restangular', 'localStorageService', '$locati
             function handleTokenExpiration(response) {
                 var token = localStorageService.get('authtoken');
                 if (response.status === 401 && angular.isDefined(token) && token !== null) {
-                    //if (response.status === 401 && AuthService.isAuthenticated()) {
+                    //if (response.status === 401 && RhAuth.isAuthenticated()) {
                     // UNAUTHORIZED but signed in => auth token expired
-                    //AuthService.clearAuthInfo();
+                    //RhAuth.clearAuthInfo();
 
                     localStorageService.set('Error 401', {
                         "why": "expired",
                         "from": $location.path(),
                         "params": routeParams
                     });
-                    restheartRestangular.onTokenExpired();
+                    RestheartRestangular.onTokenExpired();
                     return true; // handled
-                } else {
-
                 }
                 return false; // not handled
             }
@@ -274,10 +276,10 @@ module.factory('ApiRestangular', ['Restangular', 'localStorageService', '$locati
                             'why': 'forbidden',
                             'from': $location.path()
                         });
-                        restheartRestangular.onForbidden();
+                        RestheartRestangular.onForbidden();
 
                     } else {
-                        restheartRestangular.Unauthenticated();
+                        RestheartRestangular.onUnauthenticated();
                     }
 
                     return true; // handled
@@ -290,9 +292,9 @@ module.factory('ApiRestangular', ['Restangular', 'localStorageService', '$locati
 
 // Restangular service for API calling
 // with full response (also returns response headers)
-module.factory('ApiFRRestangular', ['ApiRestangular',
-    function (ApiRestangular) {
-        return ApiRestangular.withConfig(function (RestangularConfigurer) {
+module.factory('FRh', ['Rh',
+    function (Rh) {
+        return Rh.withConfig(function (RestangularConfigurer) {
             RestangularConfigurer.setFullResponse(true);
         });
     }])
