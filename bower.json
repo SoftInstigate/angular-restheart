@@ -12,6 +12,9 @@
     "angular",
     "authentication"
   ],
+  "ignore": [
+    "example"
+  ],
   "license": "MIT",
   "location": "git@github.com/SoftInstigate/angular-restheart-restangular.git",
   "ignore": [],
