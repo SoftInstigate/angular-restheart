@@ -262,7 +262,7 @@ module.factory('Rh', ['Restangular', 'localStorageService', '$location', 'resthe
                         "from": $location.path(),
                         "params": routeParams
                     });
-                    RestheartRestangular.onTokenExpired();
+                    restheart.onTokenExpired();
                     return true; // handled
                 }
                 return false; // not handled
@@ -276,10 +276,10 @@ module.factory('Rh', ['Restangular', 'localStorageService', '$location', 'resthe
                             'why': 'forbidden',
                             'from': $location.path()
                         });
-                        RestheartRestangular.onForbidden();
+                        restheart.onForbidden();
 
                     } else {
-                        RestheartRestangular.onUnauthenticated();
+                        restheart.onUnauthenticated();
                     }
 
                     return true; // handled
