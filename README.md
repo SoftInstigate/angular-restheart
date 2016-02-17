@@ -1,6 +1,6 @@
-# angular-restheart-restangular
+# angular-restheart
 
-RestheartRestangular is an AngularJS service that simplifies the Restheart authentication process with a minimum of client code.
+angular-restheart is a set of features to simplify the use of restheart with angualrjs.
 
 
 ## Installation
@@ -8,13 +8,13 @@ RestheartRestangular is an AngularJS service that simplifies the Restheart authe
 ### Bower
 
 ```
-bower install angular-restheart-restangular
+bower install angular-restheart
 ```
 
 Import the javascript component.
 
 ```html
-<script src="bower_components/angular-restheart-restangular/angular-restheart-restangular.js"></script>
+<script src="bower_components/angular-restheart/angular-restheart.js"></script>
 ```
 
 Inject into your App.
