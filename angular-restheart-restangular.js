@@ -16,16 +16,23 @@ module.config(['localStorageServiceProvider', 'RestangularProvider',
         RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
             var extractedData;
             if (operation === "getList") {
-                if (angular.isDefined(data._embedded['rh:doc'])) {
-                    extractedData = data._embedded['rh:doc'];
-                } else if (angular.isDefined(data._embedded['rh:file'])) {
-                    extractedData = data._embedded['rh:file'];
-                } else {
-                    extractedData = [];
-                }
 
-                if (angular.isDefined(data._embedded['rh:warnings'])) {
-                    extractedData._warnings = data._embedded['rh:warnings'];
+                if (angular.isUndefined(data)
+                    || angular.isUndefined(data._embedded)) {
+                    extractedData = [];
+                } else {
+
+                    if (angular.isDefined(data._embedded['rh:doc'])) {
+                        extractedData = data._embedded['rh:doc'];
+                    } else if (angular.isDefined(data._embedded['rh:file'])) {
+                        extractedData = data._embedded['rh:file'];
+                    } else {
+                        extractedData = [];
+                    }
+
+                    if (angular.isDefined(data._embedded['rh:warnings'])) {
+                        extractedData._warnings = data._embedded['rh:warnings'];
+                    }
                 }
 
                 extractedData._returned = data._returned;
@@ -35,6 +42,8 @@ module.config(['localStorageServiceProvider', 'RestangularProvider',
             } else {
                 extractedData = data;
             }
+
+            //console.debug("**** " + JSON.stringify(extractedData, null, 2));
 
             return extractedData;
         });
