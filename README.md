@@ -1,15 +1,17 @@
 # angular-restheart
 
-angular-restheart is an AngularJs module that makes easy using RESTHeart.
+AngularJs module to handle RESTHeart API properly and easily
 
 ## Overview
 
 The module contains the following services:
 
-- RhAuth: to manage authentication
-- Rh: Restangular configured for RESTHeart
-- FRh: Restangular configured for RESTHeart with full response enabled (response headers)
-- RhLogic: Restangular properly for RESTHeart Application Logic resources
+- **RhAuth** authentication service
+- **Rh** Restangular service configured for RESTHeart
+- **FRh** Restangular service configured for RESTHeart with full response enabled (response headers)
+- **RhLogic** Restangular service properly for RESTHeart Application Logic resources
+
+For more information on Restangular refer to its [documentation](https://github.com/mgonto/restangular)
 
 ## Installation
 
