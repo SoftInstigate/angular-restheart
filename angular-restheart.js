@@ -11,7 +11,6 @@ module.config(['localStorageServiceProvider', 'RestangularProvider',
             id: "_id",
             etag: "_etag",
             selfLink: "_links['self'].href"
-            //parentResource: "_links['XXXX'].href" XXXX= rh:bucket | rh:coll
         });
         RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
             var extractedData;
@@ -42,8 +41,6 @@ module.config(['localStorageServiceProvider', 'RestangularProvider',
             } else {
                 extractedData = data;
             }
-
-            //console.debug("**** " + JSON.stringify(extractedData, null, 2));
 
             return extractedData;
         });
@@ -141,7 +138,6 @@ module.service('RhAuth', ['$base64', '$http', 'localStorageService', 'RhLogic', 
                 var apiOptions = {
                     nocache: new Date().getTime()
                 };
-
                 RhLogic.one('roles', id)
                     .get(apiOptions)
                     .then(function (userRoles) {
@@ -149,6 +145,7 @@ module.service('RhAuth', ['$base64', '$http', 'localStorageService', 'RhLogic', 
                         if (authToken === null) {
                             that.clearAuthInfo();
                             resolve(false);
+                            return;
                         }
                         that.saveAuthInfo(id, authToken, userRoles.data.roles);
                         that.setAuthHeader(id, authToken);
@@ -156,9 +153,7 @@ module.service('RhAuth', ['$base64', '$http', 'localStorageService', 'RhLogic', 
 
                     },
                     function errorCallback(response) {
-                        that.clearAuthInfo();
                         resolve(false);
-
                     });
             })
         };
@@ -172,7 +167,6 @@ module.service('RhAuth', ['$base64', '$http', 'localStorageService', 'RhLogic', 
                         that.clearAuthInfo();
                         resolve(true);
                     }, function errorCallback(response) {
-                        that.clearAuthInfo();
                         resolve(false);
                     });
                 }
@@ -203,7 +197,7 @@ module.factory('RhLogic', ['Restangular', 'localStorageService', '$location', 'r
             RestangularConfigurer.setErrorInterceptor(function (response, deferred, responseHandler) {
                 // check if session expired
                 var f = handleUnauthenticated(response);
-                return !f; // if handled --> false
+                return f; // if handled --> false
             });
 
             function handleUnauthenticated(response) {
@@ -215,7 +209,6 @@ module.factory('RhLogic', ['Restangular', 'localStorageService', '$location', 'r
                     restheart.onUnauthenticated();
                     return true; // handled
                 }
-
                 return false; // not handled
             }
         });
