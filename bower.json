@@ -9,15 +9,14 @@
   "description": "angular-restheart is a set of features to simplify the use of restheart with angualrjs",
   "keywords": [
     "restheart",
-    "angular",
-    "authentication"
+    "angualrjs",
+    "restangular"
   ],
   "ignore": [
     "example"
   ],
   "license": "MIT",
   "location": "git@github.com/SoftInstigate/angular-restheart.git",
-  "ignore": [],
   "dependencies": {
     "angular": "*",
     "restangular": "~1.4.0",
