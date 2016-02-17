@@ -28,7 +28,7 @@ Inject the two services into your Controller.
 .controller('MyCtrl', ['RhAuth', 'Rh',
         function (RhAuth, Rh) {
         
-        ... your logic here
+        // here your logic
         
         }
 });
@@ -100,34 +100,41 @@ RESTHeart is stateless: there isn't any authentication session and credentials m
 This service allow you to get your client authenticated.
 The two main public methods are signin and signout.
 
-`signin` takes two input parameters: id and password, both of type String. This method handles the RestHeart authentication. If the authentication is successful it is saved the authenticazion token in the browser local storage.
+`signin` takes two input parameters: id and password, both of type String. This method handles the RestHeart authentication. If the authentication is successful it is saved the authentication token in the browser local storage.
 `signin` returns a Promise object. This promise is resolved with `true` value, if the authentication is successful, or `false` otherwise.
 
 
 ### Signin example
 ```javascript
-.controller('MyCtrl', ['RhAuth', 
+ .controller('MyCtrl', ['RhAuth',
         function (RhAuth) {
-        
-            var promise = RhAuth.signin('riccardo', 'myP4ssword');
-            
-            promise.then(function(response) {
-                if(response) {
-                    console.log("Authorized");
-                }
-                else {
-                    console.log("Not Authorized");
-                }
+            $scope.signin = function () {
+                var promise = RhAuth.signin('riccardo', 'myP4ssword');
+
+                promise.then(function(response) {
+                    if(response) {
+                        console.log("Authorized");
+                    }
+                    else {
+                        console.log("Not Authorized");
+                    }
+                })
+                   
+            }
         }])
 ```
 
 
-`signout` takes as input a Boolean value. If the value is `true` the method makes a DELETE request to remove the authentication token from the database, and also clears the value of the token from Local Storage. If the input value passed is `false` is only deleted the token from Local Storage. This allows to handle the case where you do not want the other devices to remain connected after having the signed out.
+`signout` takes as input a Boolean value. If the value is `true` the method makes a DELETE request to remove the authentication token from the database, and also clears the value of the token from Local Storage. If the input value passed is `false` is only deleted the token from Local Storage. This allows to handle the case where you do not want the other devices to remain authenticated after having the signed out.
 
 ### Signout example
 ```javascript
- RhAuth.signout(true);
-
+.controller('MyCtrl', ['RhAuth',
+        function ( RhAuth) {
+            $scope.signout = function () {
+                RhAuth.signout(true);
+             }
+        }])
 ```
 
 
