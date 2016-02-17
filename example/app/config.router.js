@@ -11,7 +11,7 @@ angular.module('myApp')
             $rootScope.$stateParams = $stateParams;
         }])
 
-    .config(['$stateProvider', '$urlRouterProvider','$httpProvider',
+    .config(['$stateProvider', '$urlRouterProvider', '$httpProvider',
         function ($stateProvider) {
 
             $stateProvider
@@ -34,7 +34,6 @@ angular.module('myApp')
                     controller: 'SigninCtrl',
 
                 })
-                // gapp abstract root state, handles the header and puts the autheticatedUser in the $scope
 
                 .state('authorized', {
                     templateUrl: 'tpl/base.html',
@@ -46,6 +45,5 @@ angular.module('myApp')
                         }
                     }
                 });
-
         }
     ]);
