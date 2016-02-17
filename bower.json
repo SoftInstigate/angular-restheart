@@ -1,12 +1,12 @@
 {
-  "name": "angular-restheart-restangular",
-  "main": "angular-restheart-restangular.js",
+  "name": "angular-restheart",
+  "main": "angular-restheart.js",
   "version": "0.0.1",
-  "homepage": "https://github.com/SoftInstigate/angular-restheart-restangular",
+  "homepage": "https://github.com/SoftInstigate/angular-restheart",
   "authors": [
     "SoftInstigate"
   ],
-  "description": "angular module for configuring restangular with restheart",
+  "description": "angular-restheart is a set of features to simplify the use of restheart with angualrjs",
   "keywords": [
     "restheart",
     "angular",
@@ -16,7 +16,7 @@
     "example"
   ],
   "license": "MIT",
-  "location": "git@github.com/SoftInstigate/angular-restheart-restangular.git",
+  "location": "git@github.com/SoftInstigate/angular-restheart.git",
   "ignore": [],
   "dependencies": {
     "angular": "*",
