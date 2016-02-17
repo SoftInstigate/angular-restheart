@@ -9,7 +9,7 @@
   "description": "angular-restheart is a set of features to simplify the use of restheart with angualrjs",
   "keywords": [
     "restheart",
-    "angualrjs",
+    "angularjs",
     "restangular"
   ],
   "ignore": [
