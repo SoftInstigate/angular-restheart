@@ -40,19 +40,19 @@ Inject the two services into your Controller.
 You have to configure angular-restheart before start using it.
 
 ### setBaseUrl
-The base URL where RESTHeart is reachable from.
+The RESTHeart base URL.
 
 ### setLogicBaseUrl
-The base URL where RESTHeart _logic api is reachable from. For more information refer to [RESTHeart documentation](https://softinstigate.atlassian.net/wiki/display/RH/Application+Logic)
+The RESTHeart _logic base URL. For more information refer to [RESTHeart documentation](https://softinstigate.atlassian.net/wiki/display/RH/Application+Logic)
 
 ### onForbidden
-Function the be called when ad error 403 - Forbidden is returned
+Function the be called when an error 403 - Forbidden is returned
 
 ### onUnauthenticated
-Function the be called when ad error 401 - Unauthorized is returned 
+Function the be called when an error 401 - Unauthorized is returned 
 
 ### onTokenExpired
-Function the be called when ad error 401 - Unauthorized is returned due to token expiration 
+Function the be called when an error 401 - Unauthorized due to token expiration is returned  
 
 
 ### Configuration Example
@@ -84,16 +84,20 @@ Function the be called when ad error 401 - Unauthorized is returned due to token
 angular-restheart relies on *token-based authentication*. This is the way how RESTHeart authenticates the clients.
 RESTHeart is stateless: there isn't any authentication session and credentials must be sent on every request. For a better understanding please refer to the [RESTHeart documentation](https://softinstigate.atlassian.net/wiki/display/RH/How+Clients+authenticate#HowClientsauthenticate-AuthenticationToken)
 
-### <img height="34" align="top" src="http://tech-lives.com/wp-content/uploads/2012/03/Lock-icon.png"> Signin with Email and Password
+### <img height="34" align="top" src="http://tech-lives.com/wp-content/uploads/2012/03/Lock-icon.png"> Sign in
 
 1. <img height="24" align="top" src="https://i.ytimg.com/i/bn1OgGei-DV7aSRo_HaAiw/mq1.jpg?v=4f8f2cc9"> **Client:** Enter your email and password into the login form.
-2. <img height="24" align="top" src="https://i.ytimg.com/i/bn1OgGei-DV7aSRo_HaAiw/mq1.jpg?v=4f8f2cc9"> **Client:** On form submit call `RhAuth.signin()` with email and password.
+2. <img height="24" align="top" src="https://i.ytimg.com/i/bn1OgGei-DV7aSRo_HaAiw/mq1.jpg?v=4f8f2cc9"> **Client:** On form submit call `RhAuth.signin()` with id and password.
 3. <img height="24" align="top" src="https://i.ytimg.com/i/bn1OgGei-DV7aSRo_HaAiw/mq1.jpg?v=4f8f2cc9"> **Client:** Provide username and password credentials via the basic authentication method.
-4. <img height="24" align="top" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Places-network-server-database-icon.png"> **RestHeart Identity Manager (IDM):** Verifie the user identity:, if not - return `401 Unauthorized`.
+4. <img height="24" align="top" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Places-network-server-database-icon.png"> **RestHeart Identity Manager (IDM):** Verify the user identity: if not - return `401 Unauthorized`.
 5. <img height="24" align="top" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Places-network-server-database-icon.png"> **RestHeart Access Manager (AM):** Determine if the client is given the permission to execute it against the configured security policy:, if not - return `403 Forbidden`.
 6. <img height="24" align="top" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Places-network-server-database-icon.png"> **RestHeart:** Create an Auth Token and send it back to the client.
-7. <img height="24" align="top" src="https://i.ytimg.com/i/bn1OgGei-DV7aSRo_HaAiw/mq1.jpg?v=4f8f2cc9"> **Client:** Parse the token and save it to *Local Storage* for subsequent
+7. <img height="24" align="top" src="https://i.ytimg.com/i/bn1OgGei-DV7aSRo_HaAiw/mq1.jpg?v=4f8f2cc9"> **Client:** Parse the token and save it to *Local Storage* for subsequent.
 
+### <img height="34" align="top" src="http://i.imgur.com/S5Ei6Rj.png"> Sign out
+1. <img height="24" align="top" src="https://i.ytimg.com/i/bn1OgGei-DV7aSRo_HaAiw/mq1.jpg?v=4f8f2cc9"> **Client:** Call `RhAuth.signout()` with a boolean parameter.
+2. <img height="24" align="top" src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Places-network-server-database-icon.png"> **RestHeart:** If `RhAuth.signout(true)` Remove Auth Token from database.
+3. <img height="24" align="top" src="https://i.ytimg.com/i/bn1OgGei-DV7aSRo_HaAiw/mq1.jpg?v=4f8f2cc9"> **Client:** Remove token from Local Storage.
 
 ## Usage of RhAuth service
 
