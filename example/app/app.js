@@ -65,24 +65,22 @@ angular.module('myApp', [
 
     /* Controllers */
 
+
     .controller('SigninCtrl', ['$scope', 'RhAuth', '$state', '$http', '$location', 'Rh',
         function ($scope, RhAuth, $state, $http, $location, Rh) {
-
             $scope.signin = function () {
-
                 var promise = RhAuth.signin($scope.user.email, $scope.user.password);
                 promise.then(function (response) {
                     if (!response) {
-                        //$state.go('401', {});
+                        $state.go('401', {}); // go to custom 401 page
                     }
                     else if (RhAuth.isAuthenticated()) {
                         $state.go('authorized', {});
                         // Simple GET request example:
-                        Rh.all('').getList()  // GET: /users
-                            .then(function (users) {
-                                console.log(users);
-                                // returns a list of users
-                                // first Restangular obj in list: { id: 123 }
+                        Rh.all('').getList()
+                            .then(function (dbs) {
+                                console.log(dbs);
+                                // returns a list of databases
                             })
                     }
                 })
