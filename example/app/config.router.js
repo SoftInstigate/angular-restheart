@@ -19,7 +19,7 @@ angular.module('myApp')
 
                 .state('signin', {
                     url: '/signin',
-                    templateUrl: 'views/signin.html',
+                    templateUrl: 'components/signin/signinView.html',
                     controller: 'SigninCtrl'
                 })
 
@@ -29,10 +29,10 @@ angular.module('myApp')
                     controller: 'MainCtrl'
                 })
 
-                .state('app.authorized', {
-                    url: "/authorized",
-                    templateUrl: 'views/base.html',
-                    controller: 'LoggedCtrl',
+                .state('app.authenticated', {
+                    url: "/authenticated",
+                    templateUrl: 'components/authenticated/authenticatedView.html',
+                    controller: 'AuthenticatedCtrl',
                     resolve: {
                         baseUrl: function (localStorageService) {
                             return localStorageService.get('restheartUrl');

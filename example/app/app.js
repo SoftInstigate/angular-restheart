@@ -1,6 +1,5 @@
 'use strict';
 
-// Declare app level module which depends on views, and components
 angular.module('myApp', [
     'ui.router',
     'restheart'
@@ -56,61 +55,8 @@ angular.module('myApp', [
                     );
                 };
             });
-        }])
+        }]);
 
 
-    /* Controllers */
 
-    .controller('MainCtrl', ['$state', 'RhAuth', function ($state, RhAuth) {
-        // redirect to signin if not authenticated
-        if (!RhAuth.isAuthenticated()) {
-            $state.go("signin");
-            return;
-        }
-    }])
-
-
-    .controller('SigninCtrl', ['$scope', 'RhAuth', '$state', '$http', '$location', 'Rh',
-        function ($scope, RhAuth, $state, $http, $location, Rh) {
-
-            if (RhAuth.isAuthenticated()) {
-                $state.go("app.authorized");
-                return;
-            }
-
-
-            $scope.signin = function () {
-
-                var promise = RhAuth.signin($scope.user.email, $scope.user.password);
-
-                promise.then(function (response) {
-                    if (response) {
-                        console.log("Authorized");
-                        $state.go('app.authorized', {});
-                        // Simple GET request example:
-                        Rh.all('').getList()
-                            .then(function (dbs) {
-                                console.log(dbs);
-                                // returns a list of databases
-                            })
-                    }
-                    else {
-                        console.log("Not Authorized");
-                    }
-                })
-
-
-            }
-        }])
-
-    .controller('LoggedCtrl', ['RhAuth', '$state', '$scope',
-        function (RhAuth, $state, $scope) {
-            $scope.signout = function () {
-                var promise = RhAuth.signout(true);
-                promise.then(function () {
-                    $state.go('signin', {});
-                });
-
-            }
-        }])
 
