@@ -11,10 +11,17 @@ angular.module('myApp')
             $rootScope.$stateParams = $stateParams;
         }])
 
-    .config(['$stateProvider', '$urlRouterProvider', '$httpProvider',
-        function ($stateProvider) {
-
+    .config(['$stateProvider', '$urlRouterProvider',
+        function ($stateProvider,$urlRouterProvider) {
+            $urlRouterProvider
+                .otherwise('/authorized');
             $stateProvider
+
+                .state('signin', {
+                    url: '/signin',
+                    templateUrl: 'tpl/signin.html',
+                    controller: 'SigninCtrl'
+                })
 
                 .state('403', {
                     url: '/403',
@@ -28,14 +35,14 @@ angular.module('myApp')
                     controller: '401Ctrl'
                 })
 
-                .state('home', {
-                    url: '',
-                    templateUrl: 'tpl/signin.html',
-                    controller: 'SigninCtrl',
-
+                .state('app', {
+                    template: '<div ui-view></div>',
+                    abstract: true,
+                    controller: 'MainCtrl'
                 })
 
-                .state('authorized', {
+                .state('app.authorized', {
+                    url: "/authorized",
                     templateUrl: 'tpl/base.html',
                     controller: 'LoggedCtrl',
                     resolve: {
@@ -44,6 +51,8 @@ angular.module('myApp')
 
                         }
                     }
-                });
+                }
+
+            );
         }
     ]);

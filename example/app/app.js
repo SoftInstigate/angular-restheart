@@ -14,17 +14,17 @@ angular.module('myApp', [
 
         restheartProvider.onForbidden(
             function () {
-                console.log("Forbidden - User Function");
+                alert("Forbidden - User Custom Function");
             }
         );
         restheartProvider.onTokenExpired(
             function () {
-                console.log("Token Expired - User Function");
+                alert("Token Expired - User Custom Function");
             }
         );
         restheartProvider.onUnauthenticated(
             function () {
-                console.log("User Unauthenticated, wrong username or password - User Function");
+                alert("User Unauthenticated, wrong username or password - User Custom Function");
             }
         );
 
@@ -58,24 +58,35 @@ angular.module('myApp', [
             });
         }])
 
-    .run(['$rootScope', '$state', 'RhAuth',
-        function ($rootScope, $state, RhAuth) {
-            RhAuth.clearAuthInfo();
-        }])
 
     /* Controllers */
+
+    .controller('MainCtrl', ['$state', 'RhAuth', function ($state, RhAuth) {
+        // redirect to signin if not authenticated
+        if (!RhAuth.isAuthenticated()) {
+            $state.go("signin");
+            return;
+        }
+    }])
 
 
     .controller('SigninCtrl', ['$scope', 'RhAuth', '$state', '$http', '$location', 'Rh',
         function ($scope, RhAuth, $state, $http, $location, Rh) {
+
+            if (RhAuth.isAuthenticated()) {
+                $state.go("app.authorized");
+                return;
+            }
+
+
             $scope.signin = function () {
+
                 var promise = RhAuth.signin($scope.user.email, $scope.user.password);
+
                 promise.then(function (response) {
-                    if (!response) {
-                        $state.go('401', {}); // go to custom 401 page
-                    }
-                    else if (RhAuth.isAuthenticated()) {
-                        $state.go('authorized', {});
+                    if (response) {
+                        console.log("Authorized");
+                        $state.go('app.authorized', {});
                         // Simple GET request example:
                         Rh.all('').getList()
                             .then(function (dbs) {
@@ -83,15 +94,23 @@ angular.module('myApp', [
                                 // returns a list of databases
                             })
                     }
+                    else {
+                        console.log("Not Authorized");
+                    }
                 })
+
+
             }
         }])
 
-    .controller('LoggedCtrl', ['$scope', '$window', '$location', 'RhAuth', '$state',
-        function ($scope, $window, $location, RhAuth, $state) {
+    .controller('LoggedCtrl', ['RhAuth', '$state', '$scope',
+        function (RhAuth, $state, $scope) {
             $scope.signout = function () {
-                RhAuth.signout(true);
-                $state.go('home', {});
+                var promise = RhAuth.signout(true);
+                promise.then(function () {
+                    $state.go('signin', {});
+                });
+
             }
         }])
 
