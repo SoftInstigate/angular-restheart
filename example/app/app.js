@@ -2,7 +2,8 @@
 
 angular.module('myApp', [
     'ui.router',
-    'restheart'
+    'restheart',
+    'LocalStorageModule'
 ])
 
 

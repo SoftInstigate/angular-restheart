@@ -1,8 +1,12 @@
-<div>
-    logged in
+<div class=" text-center">
+    Welcome. You are in.
 </div>
-<div>
+<div class=" text-center">
+    <form name="form" class="form-validation">
+        <button type="submit" class="btn btn-lg btn-primary btn-block" ng-click="query()">Query</button>
+    </form>
     <form name="form" class="form-validation">
         <button type="submit" class="btn btn-lg btn-primary btn-block" ng-click="signout(true)">Sign Out</button>
     </form>
+    Query Result: {{queryResult}}
 </div>
