@@ -19,20 +19,8 @@ angular.module('myApp')
 
                 .state('signin', {
                     url: '/signin',
-                    templateUrl: 'tpl/signin.html',
+                    templateUrl: 'views/signin.html',
                     controller: 'SigninCtrl'
-                })
-
-                .state('403', {
-                    url: '/403',
-                    templateUrl: 'tpl/page_403.html',
-                    controller: '403Ctrl'
-                })
-
-                .state('401', {
-                    url: '/401',
-                    templateUrl: 'tpl/page_401.html',
-                    controller: '401Ctrl'
                 })
 
                 .state('app', {
@@ -43,7 +31,7 @@ angular.module('myApp')
 
                 .state('app.authorized', {
                     url: "/authorized",
-                    templateUrl: 'tpl/base.html',
+                    templateUrl: 'views/base.html',
                     controller: 'LoggedCtrl',
                     resolve: {
                         baseUrl: function (localStorageService) {

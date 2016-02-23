@@ -114,10 +114,3 @@ angular.module('myApp', [
             }
         }])
 
-    .controller('403Ctrl', [function () {
-        console.log("403");
-    }])
-
-    .controller('401Ctrl', [function () {
-        console.log("Error 401 Page");
-    }])
