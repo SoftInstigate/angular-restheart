@@ -14,7 +14,7 @@ angular.module('myApp')
     .config(['$stateProvider', '$urlRouterProvider',
         function ($stateProvider,$urlRouterProvider) {
             $urlRouterProvider
-                .otherwise('/authorized');
+                .otherwise('/signin');
             $stateProvider
 
                 .state('signin', {
