@@ -1,6 +1,6 @@
 {
   "name": "angular-restheart",
-  "main": "angular-restheart.js",
+  "main": "angular-restheart.module.js",
   "version": "0.0.1",
   "homepage": "https://github.com/SoftInstigate/angular-restheart",
   "authors": [
