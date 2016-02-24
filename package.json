@@ -1,0 +1,35 @@
+{
+  "name": "angular-restheart",
+  "version": "0.0.1",
+  "description": "AngularJs module to handle RESTHeart API properly and easily",
+  "main": "angular-restheart.module.js",
+  "directories": {
+    "example": "example"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "del": "^2.2.0",
+    "gulp": "^3.9.1",
+    "gulp-angular-filesort": "^1.1.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-inject": "^3.0.0",
+    "gulp-uglify": "^1.5.3",
+    "run-sequence": "^1.1.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SoftInstigate/angular-restheart.git"
+  },
+  "keywords": [
+    "restheart"
+  ],
+  "author": "SoftInstigate",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SoftInstigate/angular-restheart/issues"
+  },
+  "homepage": "https://github.com/SoftInstigate/angular-restheart#readme"
+}
