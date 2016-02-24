@@ -24,7 +24,7 @@ bower install angular-restheart
 Import the javascript component.
 
 ```html
-<script src="bower_components/angular-restheart/angular-restheart.js"></script>
+<script src="bower_components/angular-restheart/dist/angular-restheart.min.js"></script>
 ```
 
 Inject into your App.
