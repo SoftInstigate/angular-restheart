@@ -27,7 +27,13 @@
                         extractedData = data._embedded['rh:doc'];
                     } else if (angular.isDefined(data._embedded['rh:file'])) {
                         extractedData = data._embedded['rh:file'];
-                    } else {
+                    } else if (angular.isDefined(data._embedded['rh:bucket'])) {
+                        extractedData = data._embedded['rh:bucket'];
+                    } else if (angular.isDefined(data._embedded['rh:coll'])) {
+                        extractedData = data._embedded['rh:coll'];
+                    }else if (angular.isDefined(data. _embedded['rh:db'])) {
+                        extractedData = data. _embedded['rh:db'];
+                    }else {
                         extractedData = [];
                     }
 

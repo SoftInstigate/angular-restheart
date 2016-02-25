@@ -7,7 +7,7 @@ angular.module('myApp')
 
             $scope.query = function () {
                 Rh.all('').getList().then(function (dbs) {
-                    console.log(dbs.plain());
+                    console.log(dbs);
                     $scope.queryResult = dbs.plain();
                     // returns a list of databases
 
