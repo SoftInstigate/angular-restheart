@@ -30,7 +30,11 @@ angular.module('myApp')
                     else {
                         console.log("Not Authenticated");
                     }
-                })
+                }, function(reason) {
+                        console.log(JSON.stringify(reason));
+                    alert(JSON.stringify("Error contacting RESTHeart. Is it running? Error status: " + reason.status));
+                }
+                )
 
 
             }

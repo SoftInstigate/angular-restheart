@@ -80,9 +80,12 @@
                         resolve(true);
 
                     },
-                    function(response) {
-                        errorCallback(response);
-                        resolve(false);
+                    function (response) {
+                        if(response.status === 401){
+                            resolve(false);
+                        } else{
+                            reject(response);
+                        }
 
                     });
             })
