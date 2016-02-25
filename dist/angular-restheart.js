@@ -288,9 +288,12 @@
                         resolve(true);
 
                     },
-                    function(response) {
-                        errorCallback(response);
-                        resolve(false);
+                    function (response) {
+                        if(response.status === 401){
+                            resolve(false);
+                        } else{
+                            reject(response);
+                        }
 
                     });
             })
@@ -355,9 +358,9 @@
                                 'from': $location.path()
                             });
                             restheart.onUnauthenticated();
-                            return true; // handled
+                            return false; // handled
                         }
-                        return false; // not handled
+                        return true; // not handled
                     }
                 });
             }

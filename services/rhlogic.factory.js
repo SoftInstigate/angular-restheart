@@ -36,9 +36,9 @@
                                 'from': $location.path()
                             });
                             restheart.onUnauthenticated();
-                            return true; // handled
+                            return false; // handled
                         }
-                        return false; // not handled
+                        return true; // not handled
                     }
                 });
             }
