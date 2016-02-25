@@ -18,8 +18,8 @@
   "license": "MIT",
   "location": "git@github.com/SoftInstigate/angular-restheart.git",
   "dependencies": {
-    "angular": "*",
-    "restangular": "*",
+    "angular": "1.x",
+    "restangular": "1.x",
     "angular-local-storage": "*",
     "angular-base64": "*"
   }
