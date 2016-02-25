@@ -266,7 +266,7 @@
             return !(angular.isUndefined(authHeader) || authHeader === null);
         };
 
-        this.signin = function (id, password) {
+        this.signin = function (id, password, errorCallback) {
             var that = this;
             return $q(function (resolve, reject) {
                 that.clearAuthInfo();
@@ -288,8 +288,10 @@
                         resolve(true);
 
                     },
-                    function errorCallback(response) {
+                    function(response) {
+                        errorCallback(response);
                         resolve(false);
+
                     });
             })
         };
