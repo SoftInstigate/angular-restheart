@@ -1,19 +1,25 @@
-<div class="container m-t-lg">
-    <div class="col-md-offset-1 col-md-8">
-        <div class="text-center m-b-lg">
-            <h1>angular-restheart Demo App</h1>
-            <p>Sign In: </p>
-        </div>
+<div class="text-center">
+    <div class="container m-t-lg">
+        <div class="col-md-offset-1 col-md-8">
+            <div class="text-center m-b-lg">
+                <h1>angular-restheart Demo App</h1>
 
-        <form class=" text-center">
-            <div class="m-b text-center text-warning" ng-if="authError" ng-bind="authError">
+                <p>Sign In: </p>
             </div>
-            <input type="id" placeholder="id" class="form-control m-b-sm" ng-model="user.email" required>
-            <input type="password" placeholder="Password" class="form-control m-b-sm" ng-model="user.password" required>
-            <button type="submit" class="btn btn-primary pull-right" ng-click="signin()" ng-disabled='form.$invalid'>Signin</button>
-        </form>
-        <div class="m-b text-center text-warning" ng-if="error401Why === 'wrong credentials'">
-            Wrong Credentials.
+
+            <form class=" text-center">
+                <div class="m-b text-center text-warning" ng-if="authError" ng-bind="authError">
+                </div>
+                <input type="id" placeholder="id" class="form-control m-b-sm" ng-model="user.email" required>
+                <input type="password" placeholder="Password" class="form-control m-b-sm" ng-model="user.password"
+                       required>
+                <button type="submit" class="btn btn-success pull-right" ng-click="signin()"
+                        ng-disabled='form.$invalid'>Signin
+                </button>
+            </form>
+            <div class="m-b text-center text-warning" ng-if="error401Why === 'wrong credentials'">
+                Wrong Credentials.
+            </div>
         </div>
     </div>
 </div>

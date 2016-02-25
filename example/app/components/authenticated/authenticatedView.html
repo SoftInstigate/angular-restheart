@@ -1,12 +1,30 @@
-<div class=" text-center">
-    Welcome. You are in.
+<div class="text-center">
+
+    <form name="form" class="form-validation" style="float:right">
+        <button type="submit" class="btn btn-lg btn-danger btn-block" ng-click="signout(true)">Sign Out</button>
+    </form>
+
+
+    <h1>Welcome. You are in.</h1>
 </div>
-<div class=" text-center">
+<div class="text-center">
+    <div>
+        <p>Clicking the 'Query' button you will try to execute a query to the root of your RESTHeart API (/).
+            The result of the query will be an array of your databases name.</p>
+        <p><i>Only authorized User can access that API.</i></p>
+
+    </div>
     <form name="form" class="form-validation">
-        <button type="submit" class="btn btn-lg btn-primary btn-block" ng-click="query()">Query</button>
+        <button type="submit" class="btn btn-lg btn-info btn-block" ng-click="query()">Query</button>
     </form>
-    <form name="form" class="form-validation">
-        <button type="submit" class="btn btn-lg btn-primary btn-block" ng-click="signout(true)">Sign Out</button>
-    </form>
-    Query Result: {{queryResult}}
+    <br>
+
+    <div ng-if="queryResult">
+        <b>Query Result:</b>
+        <br>
+        <br>
+        <code> {{queryResult}}</code>
+    </div>
+
+
 </div>

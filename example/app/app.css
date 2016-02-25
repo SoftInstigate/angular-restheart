@@ -555,10 +555,14 @@ a.list-group-item.hover {
   text-align: left; }
 
 .text-right {
-  text-align: right; }
+  text-align: right;
+  margin: auto}
 
 .text-center {
-  text-align: center; }
+  text-align: center;
+  width: 600px;
+  margin:0 auto
+}
 
 .text-justify {
   text-align: justify; }
