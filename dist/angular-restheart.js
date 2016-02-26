@@ -348,9 +348,9 @@
                                 'from': $location.path()
                             });
                             restheart.onUnauthenticated();
-                            return false; // handled
+                            return true; // handled
                         }
-                        return true; // not handled
+                        //return true; // not handled
                     }
                 });
             }
