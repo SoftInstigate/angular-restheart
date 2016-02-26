@@ -9,7 +9,7 @@ angular.module('myApp', [
 
     .config(function (restheartProvider) {
 
-        restheartProvider.setBaseUrl("http://localhost:8080/");
+        restheartProvider.setBaseUrl("http://localhost:8080");
         restheartProvider.setLogicBaseUrl("http://localhost:8080/_logic");
 
         restheartProvider.onForbidden(

@@ -53,27 +53,17 @@
             selfLink: "_links['self'].href"
         });
         RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
-            var extractedData;
+            var extractedData = [];
             if (operation === "getList") {
 
-                if (angular.isUndefined(data)
-                    || angular.isUndefined(data._embedded)) {
-                    extractedData = [];
-                } else {
 
-                    if (angular.isDefined(data._embedded['rh:doc'])) {
-                        extractedData = data._embedded['rh:doc'];
-                    } else if (angular.isDefined(data._embedded['rh:file'])) {
-                        extractedData = data._embedded['rh:file'];
-                    } else if (angular.isDefined(data._embedded['rh:bucket'])) {
-                        extractedData = data._embedded['rh:bucket'];
-                    } else if (angular.isDefined(data._embedded['rh:coll'])) {
-                        extractedData = data._embedded['rh:coll'];
-                    }else if (angular.isDefined(data. _embedded['rh:db'])) {
-                        extractedData = data. _embedded['rh:db'];
-                    }else {
-                        extractedData = [];
-                    }
+                if (angular.isDefined(data)
+                    || angular.isDefined(data._embedded)) {
+
+                    angular.forEach(data._embedded, function (value, key) {
+                        if (key.lastIndexOf("rh:", 0) === 0 && key !== "rh:warnings")
+                            extractedData = _.union(extractedData, value)
+                    });
 
                     if (angular.isDefined(data._embedded['rh:warnings'])) {
                         extractedData._warnings = data._embedded['rh:warnings'];
