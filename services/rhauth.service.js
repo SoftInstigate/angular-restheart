@@ -11,6 +11,14 @@
 
     function RhAuth($base64, $http, localStorageService, RhLogic, $q, Rh) {
 
+        this.setBaseUrl = function(url){
+            Rh.setBaseUrl(url);
+        };
+
+        this.setLogicBaseUrl = function(url){
+            RhLogic.setBaseUrl(url);
+        }
+
         this.setAuthHeader = function (userid, password) {
             $http.defaults.headers.common["Authorization"] = 'Basic ' + $base64.encode(userid + ":" + password);
         };
