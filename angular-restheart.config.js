@@ -18,24 +18,24 @@
             var extractedData = [];
             if (operation === "getList") {
 
-
                 if (angular.isDefined(data)
                     || angular.isDefined(data._embedded)) {
 
                     angular.forEach(data._embedded, function (value, key) {
                         if (key.lastIndexOf("rh:", 0) === 0 && key !== "rh:warnings")
                             extractedData = _.union(extractedData, value)
+                        // extractedData.push(value);
                     });
 
                     if (angular.isDefined(data._embedded['rh:warnings'])) {
                         extractedData._warnings = data._embedded['rh:warnings'];
                     }
-                }
 
-                extractedData._returned = data._returned;
-                extractedData._size = data._size;
-                extractedData._total_pages = data._total_pages;
-                extractedData._links = data._links;
+                    extractedData._returned = data._returned;
+                    extractedData._size = data._size;
+                    extractedData._total_pages = data._total_pages;
+                    extractedData._links = data._links;
+                }
             } else {
                 extractedData = data;
             }
