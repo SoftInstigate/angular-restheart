@@ -108,11 +108,11 @@
                         that.clearAuthInfo();
                         resolve(true);
                     }, function errorCallback(response) {
-                        resolve(false);
+                        reject(response);
                     });
                 }
                 else {
-                    this.clearAuthInfo();
+                    that.clearAuthInfo();
                     resolve(true);
                 }
             })
