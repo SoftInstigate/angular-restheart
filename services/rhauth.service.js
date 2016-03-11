@@ -23,23 +23,21 @@
 
         this.saveAuthInfo = function (userid, password, roles) {
             var header = $base64.encode(userid + ":" + password);
-            localStorageService.set('userid', userid);
-            localStorageService.set('authtoken', header);
-            localStorageService.set('nav', $base64.encode(JSON.stringify(roles)));
+            localStorageService.set('rh_userid', userid);
+            localStorageService.set('rh_authtoken', header);
+            localStorageService.set('rh_nav', $base64.encode(JSON.stringify(roles)));
             return header;
         };
 
         this.clearAuthInfo = function () {
-            var restheartUrl = localStorageService.get('restheartUrl');
-            var error = localStorageService.get('error');
+            var error = localStorageService.get('rh_autherror');
 
             localStorageService.clearAll();
 
-            // avoid restheartUrl to be deleted
-            localStorageService.set('restheartUrl', restheartUrl);
-
             // avoid redirected to be deleted
-            localStorageService.set('error', error);
+            if (angular.isDefined(error) && error !== null) {
+                localStorageService.set('rh_autherror', error);
+            }
 
             if (!angular.isUndefined($http) && !angular.isUndefined($http.defaults)) {
                 delete $http.defaults.headers.common["Authorization"];
@@ -47,15 +45,15 @@
         };
 
         this.getAuthHeader = function () {
-            return localStorageService.get('authtoken');
+            return localStorageService.get('rh_authtoken');
         };
 
         this.getUserid = function () {
-            return localStorageService.get('userid');
+            return localStorageService.get('rh_userid');
         };
 
         this.getUserRoles = function () {
-            var _nav = localStorageService.get('nav');
+            var _nav = localStorageService.get('rh_nav');
             return JSON.parse($base64.decode(_nav));
         };
 
@@ -100,7 +98,7 @@
             var that = this;
             return $q(function (resolve, reject) {
                 if (removeTokenFromDB) {
-                    var userid = localStorageService.get('userid');
+                    var userid = localStorageService.get('rh_userid');
                     Rh.one('_authtokens', userid).remove().then(function () {
                         that.clearAuthInfo();
                         resolve(true);

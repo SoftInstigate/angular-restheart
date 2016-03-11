@@ -5,7 +5,6 @@
             .module('restheart')
             .factory('Rh', Rh);
 
-
     Rh.$inject = ['Restangular', 'localStorageService', '$location', '$state', 'restheart', '$http'];
 
     // Restangular service for API calling
@@ -21,7 +20,6 @@
             } else { //default configuration
                 var _restheartUrl;
                 _restheartUrl = "http://" + $location.host() + ":8080";
-                localStorageService.set("restheartUrl", _restheartUrl);
                 RestangularConfigurer.setBaseUrl(_restheartUrl);
             }
 
@@ -38,18 +36,18 @@
             });
 
             function setAuthHeaderFromLS() {
-                var token = localStorageService.get('authtoken');
+                var token = localStorageService.get('rh_authtoken');
                 if (angular.isDefined(token) && token !== null) {
-                    $http.defaults.headers.common["Authorization"] = 'Basic ' + localStorageService.get('authtoken');
+                    $http.defaults.headers.common["Authorization"] = 'Basic ' + localStorageService.get('rh_authtoken');
                 }
             }
 
             function handleTokenExpiration(response) {
-                var token = localStorageService.get('authtoken');
+                var token = localStorageService.get('rh_authtoken');
                 if (response.status === 401 && angular.isDefined(token) && token !== null) {
                     // call configure onTokenExpired
 
-                    localStorageService.set('error', {
+                    localStorageService.set('rh_autherror', {
                         "why": "expired",
                         "from": $location.path()
                     });
@@ -65,16 +63,11 @@
 
             function handleForbidden(response) {
                 if (response.status === 403) {
-                    var token = localStorageService.get('authtoken');
+                    var token = localStorageService.get('rh_authtoken');
                     if (angular.isDefined(token) && token !== null) {
-                        localStorageService.set('Error 403', {
+                        localStorageService.set('rh_autherror', {
                             'why': 'forbidden',
                             'from': $location.path()
-                        });
-                        
-                        localStorageService.set('error', {
-                            "why": "forbidden",
-                            "from": $location.path()
                         });
 
                         // call configured call back, if any
@@ -84,6 +77,11 @@
                     } else {
                         // call configured call back, if any
                         if (angular.isFunction(restheart.onUnauthenticated)) {
+                            localStorageService.set('rh_autherror', {
+                                'why': 'not_authenticated',
+                                'from': $location.path()
+                            });
+
                             restheart.onUnauthenticated($location, $state);
                         }
                     }

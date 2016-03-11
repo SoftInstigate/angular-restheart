@@ -62,10 +62,10 @@ You have to configure angular-restheart before using it.
 
 The callback functions are passed two arguments: `$location` and `$state`, that can be used for redirection. 
 
-Also, in case of *forbidded* and *token expired* the `error` varible is set in the local storage:
+Also, in case of errors the `rh_error` varible is set in the local storage:
 
 ```
-error: {"why": ["forbidded" | "expired"], "from": <location_where_error_occurred>}
+rh_error: {"why": ["forbidded" | "expired" "not_authenticated"], "from": <location_where_error_occurred>}
 ``` 
 
 ### Configuration Example

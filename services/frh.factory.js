@@ -2,9 +2,8 @@
     'use strict';
 
     angular
-        .module('restheart')
-        .factory('FRh', FRh);
-
+            .module('restheart')
+            .factory('FRh', FRh);
 
     FRh.$inject = ['Rh'];
 
@@ -16,5 +15,4 @@
             RestangularConfigurer.setFullResponse(true);
         });
     }
-
 })();
