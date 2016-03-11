@@ -117,6 +117,16 @@
     // also handles auth token expiration
 
     function Rh(Restangular, localStorageService, $location, $state, restheart, $http) {
+        this.clearAuthInfo = function () {
+            localStorageService.remove("rh_userid");
+            localStorageService.remove("rh_authtoken");
+            localStorageService.remove("rh_nav");
+
+            if (!angular.isUndefined($http) && !angular.isUndefined($http.defaults)) {
+                delete $http.defaults.headers.common["Authorization"];
+            }
+        };
+
         return Restangular.withConfig(function (RestangularConfigurer) {
 
             var baseUrl = restheart.baseUrl;
@@ -141,6 +151,8 @@
                 return elem;
             });
 
+
+
             function setAuthHeaderFromLS() {
                 var token = localStorageService.get('rh_authtoken');
                 if (angular.isDefined(token) && token !== null) {
@@ -151,8 +163,9 @@
             function handleTokenExpiration(response) {
                 var token = localStorageService.get('rh_authtoken');
                 if (response.status === 401 && angular.isDefined(token) && token !== null) {
-                    // call configure onTokenExpired
+                    this.clearAuthInfo();
 
+                    // call configure onTokenExpired
                     localStorageService.set('rh_autherror', {
                         "why": "expired",
                         "from": $location.path()
@@ -183,6 +196,8 @@
                     } else {
                         // call configured call back, if any
                         if (angular.isFunction(restheart.onUnauthenticated)) {
+                            this.clearAuthInfo();
+
                             localStorageService.set('rh_autherror', {
                                 'why': 'not_authenticated',
                                 'from': $location.path()
@@ -232,14 +247,9 @@
         };
 
         this.clearAuthInfo = function () {
-            var error = localStorageService.get('rh_autherror');
-
-            localStorageService.clearAll();
-
-            // avoid redirected to be deleted
-            if (angular.isDefined(error) && error !== null) {
-                localStorageService.set('rh_autherror', error);
-            }
+            localStorageService.remove("rh_userid");
+            localStorageService.remove("rh_authtoken");
+            localStorageService.remove("rh_nav");
 
             if (!angular.isUndefined($http) && !angular.isUndefined($http.defaults)) {
                 delete $http.defaults.headers.common["Authorization"];

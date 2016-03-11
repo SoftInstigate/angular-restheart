@@ -30,14 +30,9 @@
         };
 
         this.clearAuthInfo = function () {
-            var error = localStorageService.get('rh_autherror');
-
-            localStorageService.clearAll();
-
-            // avoid redirected to be deleted
-            if (angular.isDefined(error) && error !== null) {
-                localStorageService.set('rh_autherror', error);
-            }
+            localStorageService.remove("rh_userid");
+            localStorageService.remove("rh_authtoken");
+            localStorageService.remove("rh_nav");
 
             if (!angular.isUndefined($http) && !angular.isUndefined($http.defaults)) {
                 delete $http.defaults.headers.common["Authorization"];
