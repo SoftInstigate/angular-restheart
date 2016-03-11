@@ -2,22 +2,20 @@
     'use strict';
 
     angular
-        .module('restheart')
-        .service('RhAuth', RhAuth);
-
+            .module('restheart')
+            .service('RhAuth', RhAuth);
 
     RhAuth.$inject = ['$base64', '$http', 'localStorageService', 'RhLogic', '$q', 'Rh'];
 
-
     function RhAuth($base64, $http, localStorageService, RhLogic, $q, Rh) {
 
-        this.setBaseUrl = function(url){
+        this.setBaseUrl = function (url) {
             Rh.setBaseUrl(url);
         };
 
-        this.setLogicBaseUrl = function(url){
+        this.setLogicBaseUrl = function (url) {
             RhLogic.setBaseUrl(url);
-        }
+        };
 
         this.setAuthHeader = function (userid, password) {
             $http.defaults.headers.common["Authorization"] = 'Basic ' + $base64.encode(userid + ":" + password);
@@ -33,7 +31,7 @@
 
         this.clearAuthInfo = function () {
             var restheartUrl = localStorageService.get('restheartUrl');
-            var redirected = localStorageService.get('redirected');
+            var error = localStorageService.get('error');
 
             localStorageService.clearAll();
 
@@ -41,7 +39,7 @@
             localStorageService.set('restheartUrl', restheartUrl);
 
             // avoid redirected to be deleted
-            localStorageService.set('redirected', redirected);
+            localStorageService.set('error', error);
 
             if (!angular.isUndefined($http) && !angular.isUndefined($http.defaults)) {
                 delete $http.defaults.headers.common["Authorization"];
@@ -75,28 +73,27 @@
                     nocache: new Date().getTime()
                 };
                 RhLogic.one('roles', id)
-                    .get(apiOptions)
-                    .then(function (userRoles) {
-                        var authToken = userRoles.headers('Auth-Token');
-                        if (authToken === null) {
-                            that.clearAuthInfo();
-                            resolve(false);
-                            return;
-                        }
-                        that.saveAuthInfo(id, authToken, userRoles.data.roles);
-                        that.setAuthHeader(id, authToken);
-                        resolve(true);
+                        .get(apiOptions)
+                        .then(function (userRoles) {
+                            var authToken = userRoles.headers('Auth-Token');
+                            if (authToken === null) {
+                                that.clearAuthInfo();
+                                resolve(false);
+                                return;
+                            }
+                            that.saveAuthInfo(id, authToken, userRoles.data.roles);
+                            that.setAuthHeader(id, authToken);
+                            resolve(true);
+                        },
+                                function (response) {
+                                    if (response.status === 401) {
+                                        resolve(false);
+                                    } else {
+                                        reject(response);
+                                    }
 
-                    },
-                    function (response) {
-                        if(response.status === 401){
-                            resolve(false);
-                        } else{
-                            reject(response);
-                        }
-
-                    });
-            })
+                                });
+            });
         };
 
         this.signout = function (removeTokenFromDB) {
@@ -110,13 +107,11 @@
                     }, function errorCallback(response) {
                         reject(response);
                     });
-                }
-                else {
+                } else {
                     that.clearAuthInfo();
                     resolve(true);
                 }
-            })
-        }
+            });
+        };
     }
-
 })();

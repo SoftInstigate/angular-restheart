@@ -2,8 +2,8 @@
     'use strict';
 
     angular
-        .module('restheart')
-        .config(configure);
+            .module('restheart')
+            .config(configure);
 
     configure.$inject = ['localStorageServiceProvider', 'RestangularProvider'];
 
@@ -22,14 +22,13 @@
 
                     angular.forEach(data._embedded, function (value, key) {
                         if (key.lastIndexOf("rh:", 0) === 0 && key !== "rh:warnings")
-                            extractedData = _.union(extractedData, value)
+                            extractedData = _.union(extractedData, value);
                     });
 
                     if (angular.isDefined(data._embedded)
-                        && angular.isDefined(data._embedded['rh:warnings'])) {
+                            && angular.isDefined(data._embedded['rh:warnings'])) {
                         extractedData._warnings = data._embedded['rh:warnings'];
                     }
-
 
                     extractedData._returned = data._returned;
                     extractedData._size = data._size;

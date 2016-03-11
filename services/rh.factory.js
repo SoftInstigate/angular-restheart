@@ -2,29 +2,27 @@
     'use strict';
 
     angular
-        .module('restheart')
-        .factory('Rh', Rh);
+            .module('restheart')
+            .factory('Rh', Rh);
 
 
-    Rh.$inject = ['Restangular', 'localStorageService', '$location', 'restheart', '$http'];
+    Rh.$inject = ['Restangular', 'localStorageService', '$location', '$state', 'restheart', '$http'];
 
     // Restangular service for API calling
     // also handles auth token expiration
 
-    function Rh(Restangular, localStorageService, $location, restheart, $http) {
+    function Rh(Restangular, localStorageService, $location, $state, restheart, $http) {
         return Restangular.withConfig(function (RestangularConfigurer) {
 
             var baseUrl = restheart.baseUrl;
 
             if (angular.isDefined(baseUrl) && baseUrl !== null) {
                 RestangularConfigurer.setBaseUrl(baseUrl);
-            }
-            else { //default configuration
+            } else { //default configuration
                 var _restheartUrl;
                 _restheartUrl = "http://" + $location.host() + ":8080";
                 localStorageService.set("restheartUrl", _restheartUrl);
                 RestangularConfigurer.setBaseUrl(_restheartUrl);
-
             }
 
             RestangularConfigurer.setErrorInterceptor(function (response, deferred, responseHandler) {
@@ -44,21 +42,22 @@
                 if (angular.isDefined(token) && token !== null) {
                     $http.defaults.headers.common["Authorization"] = 'Basic ' + localStorageService.get('authtoken');
                 }
-            };
+            }
 
             function handleTokenExpiration(response) {
                 var token = localStorageService.get('authtoken');
                 if (response.status === 401 && angular.isDefined(token) && token !== null) {
-                    //if (response.status === 401 && RhAuth.isAuthenticated()) {
-                    // UNAUTHORIZED but signed in => auth token expired
-                    //RhAuth.clearAuthInfo();
+                    // call configure onTokenExpired
 
-                    localStorageService.set('Error 401', {
+                    localStorageService.set('error', {
                         "why": "expired",
-                        "from": $location.path(),
-                        "params": routeParams
+                        "from": $location.path()
                     });
-                    restheart.onTokenExpired();
+
+                    // call configured call back, if any
+                    if (angular.isFunction(restheart.onTokenExpired)) {
+                        restheart.onTokenExpired($location, $state);
+                    }
                     return true; // handled
                 }
                 return false; // not handled
@@ -72,10 +71,21 @@
                             'why': 'forbidden',
                             'from': $location.path()
                         });
-                        restheart.onForbidden();
+                        
+                        localStorageService.set('error', {
+                            "why": "forbidden",
+                            "from": $location.path()
+                        });
 
+                        // call configured call back, if any
+                        if (angular.isFunction(restheart.onForbidden)) {
+                            restheart.onForbidden($location, $state);
+                        }
                     } else {
-                        restheart.onUnauthenticated();
+                        // call configured call back, if any
+                        if (angular.isFunction(restheart.onUnauthenticated)) {
+                            restheart.onUnauthenticated($location, $state);
+                        }
                     }
 
                     return true; // handled

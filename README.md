@@ -60,24 +60,35 @@ You have to configure angular-restheart before using it.
 
 `onTokenExpired(callback)` to set the callback function the be called on `401 - Unauthorized` due to token expiration 
 
+The callback functions are passed two arguments: `$location` and `$state`, that can be used for redirection. 
+
+Also, in case of *forbidded* and *token expired* the `error` varible is set in the local storage:
+
+```
+error: {"why": ["forbidded" | "expired"], "from": <location_where_error_occurred>}
+``` 
+
 ### Configuration Example
 ```javascript
 .config(function (restheartProvider) {
         restheartProvider.setBaseUrl("http://localhost:8080/");
         restheartProvider.setLogicBaseUrl("http://localhost:8080/_logic");
         restheartProvider.onForbidden(
-            function () {
-                console.log("Forbidden - User Function");
+            function ($location, $state) {
+                $state.go("403");
+                console.log("Forbidden");
             }
         );
         restheartProvider.onTokenExpired(
-            function () {
-                console.log("Token Expired - User Function");
+            function ($location, $state) {
+                $state.go("signin");
+                console.log("Token Expired");
             }
         );
         restheartProvider.onUnauthenticated(
-            function () {
-                console.log("User Unauthenticated, wrong username or password - User Function");
+            function ($location, $state) {
+                $state.go("signin");
+                console.log("User Unauthenticated, wrong credentials");
             }
         );
     })
