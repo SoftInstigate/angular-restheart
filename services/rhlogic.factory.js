@@ -14,10 +14,8 @@
             var baseUrl = restheart.logicBaseUrl;
 
             if (angular.isDefined(baseUrl) && baseUrl !== null) {
-                console.log("logicBaseUrl configured: " + baseUrl);
                 RestangularConfigurer.setBaseUrl(baseUrl);
             } else { //default configuration
-                console.log("logicBaseUrl not configured");
                 var _restheartUrl;
                 _restheartUrl = "http://" + $location.host() + ":8080/_logic";
                 RestangularConfigurer.setBaseUrl(_restheartUrl);
