@@ -273,7 +273,11 @@
 
         this.getUserRoles = function () {
             var _nav = localStorageService.get('rh_nav');
-            return JSON.parse($base64.decode(_nav));
+            if (angular.isString(_nav)) {
+                return JSON.parse($base64.decode(_nav));
+            } else {
+                return undefined;
+            }
         };
 
         this.isAuthenticated = function () {
