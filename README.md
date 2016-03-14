@@ -65,7 +65,7 @@ The callback functions are passed two arguments: `$location` and `$state`, that 
 Also, in case of errors the `rh_error` varible is set in the local storage:
 
 ```
-rh_error: {"why": ["forbidded" | "expired" "not_authenticated"], "from": <location_where_error_occurred>}
+rh_error: {"why": ["forbidded" | "expired" "not_authenticated"], "path": <path_where_error_occurred>, "state": <state_name_where_error_occurred>, "params": <state_params_object> }
 ``` 
 
 ### Configuration Example
