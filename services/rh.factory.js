@@ -20,7 +20,9 @@
                 delete $http.defaults.headers.common["Authorization"];
             }
         };
-
+        
+        var that = this;
+        
         return Restangular.withConfig(function (RestangularConfigurer) {
 
             var baseUrl = restheart.baseUrl;
@@ -45,8 +47,6 @@
                 return elem;
             });
 
-
-
             function setAuthHeaderFromLS() {
                 var token = localStorageService.get('rh_authtoken');
                 if (angular.isDefined(token) && token !== null) {
@@ -57,9 +57,8 @@
             function handleTokenExpiration(response) {
                 var token = localStorageService.get('rh_authtoken');
                 if (response.status === 401 && angular.isDefined(token) && token !== null) {
-                    this.clearAuthInfo();
+                    that.clearAuthInfo();
 
-                    // call configure onTokenExpired
                     localStorageService.set('rh_autherror', {
                         "why": "expired",
                         "from": $location.path()
@@ -90,7 +89,7 @@
                     } else {
                         // call configured call back, if any
                         if (angular.isFunction(restheart.onUnauthenticated)) {
-                            this.clearAuthInfo();
+                            that.clearAuthInfo();
 
                             localStorageService.set('rh_autherror', {
                                 'why': 'not_authenticated',

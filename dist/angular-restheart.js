@@ -45,12 +45,15 @@
     configure.$inject = ['localStorageServiceProvider', 'RestangularProvider'];
 
     function configure(localStorageServiceProvider, RestangularProvider) {
+        localStorageServiceProvider.setPrefix('rh');
         localStorageServiceProvider.setStorageType('sessionStorage');
+
         RestangularProvider.setRestangularFields({
             id: "_id",
             etag: "_etag",
             selfLink: "_links['self'].href"
         });
+
         RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
             var extractedData = [];
             if (operation === "getList") {
@@ -84,7 +87,6 @@
             'No-Auth-Challenge': 'true'
         });
     }
-
 })();
 (function () {
     'use strict';
@@ -126,7 +128,9 @@
                 delete $http.defaults.headers.common["Authorization"];
             }
         };
-
+        
+        var that = this;
+        
         return Restangular.withConfig(function (RestangularConfigurer) {
 
             var baseUrl = restheart.baseUrl;
@@ -151,8 +155,6 @@
                 return elem;
             });
 
-
-
             function setAuthHeaderFromLS() {
                 var token = localStorageService.get('rh_authtoken');
                 if (angular.isDefined(token) && token !== null) {
@@ -163,9 +165,8 @@
             function handleTokenExpiration(response) {
                 var token = localStorageService.get('rh_authtoken');
                 if (response.status === 401 && angular.isDefined(token) && token !== null) {
-                    this.clearAuthInfo();
+                    that.clearAuthInfo();
 
-                    // call configure onTokenExpired
                     localStorageService.set('rh_autherror', {
                         "why": "expired",
                         "from": $location.path()
@@ -196,7 +197,7 @@
                     } else {
                         // call configured call back, if any
                         if (angular.isFunction(restheart.onUnauthenticated)) {
-                            this.clearAuthInfo();
+                            that.clearAuthInfo();
 
                             localStorageService.set('rh_autherror', {
                                 'why': 'not_authenticated',

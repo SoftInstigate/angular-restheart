@@ -8,12 +8,15 @@
     configure.$inject = ['localStorageServiceProvider', 'RestangularProvider'];
 
     function configure(localStorageServiceProvider, RestangularProvider) {
+        localStorageServiceProvider.setPrefix('rh');
         localStorageServiceProvider.setStorageType('sessionStorage');
+
         RestangularProvider.setRestangularFields({
             id: "_id",
             etag: "_etag",
             selfLink: "_links['self'].href"
         });
+
         RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
             var extractedData = [];
             if (operation === "getList") {
@@ -47,5 +50,4 @@
             'No-Auth-Challenge': 'true'
         });
     }
-
 })();
