@@ -113,12 +113,12 @@
             .module('restheart')
             .factory('Rh', Rh);
 
-    Rh.$inject = ['Restangular', 'localStorageService', '$location', '$state', 'restheart', '$http'];
+    Rh.$inject = ['Restangular', 'localStorageService', '$location', '$state', '$stateParams', 'restheart', '$http'];
 
     // Restangular service for API calling
     // also handles auth token expiration
 
-    function Rh(Restangular, localStorageService, $location, $state, restheart, $http) {
+    function Rh(Restangular, localStorageService, $location, $state, $stateParams, restheart, $http) {
         this.clearAuthInfo = function () {
             localStorageService.remove("rh_userid");
             localStorageService.remove("rh_authtoken");
@@ -128,9 +128,9 @@
                 delete $http.defaults.headers.common["Authorization"];
             }
         };
-        
+
         var that = this;
-        
+
         return Restangular.withConfig(function (RestangularConfigurer) {
 
             var baseUrl = restheart.baseUrl;
@@ -169,7 +169,9 @@
 
                     localStorageService.set('rh_autherror', {
                         "why": "expired",
-                        "from": $location.path()
+                        "path": $location.path(),
+                        "state": $state.current.name,
+                        "params": $stateParams
                     });
 
                     // call configured call back, if any
@@ -187,7 +189,9 @@
                     if (angular.isDefined(token) && token !== null) {
                         localStorageService.set('rh_autherror', {
                             'why': 'forbidden',
-                            'from': $location.path()
+                            "path": $location.path(),
+                            "state": $state.current.name,
+                            "params": $stateParams
                         });
 
                         // call configured call back, if any
@@ -201,7 +205,9 @@
 
                             localStorageService.set('rh_autherror', {
                                 'why': 'not_authenticated',
-                                'from': $location.path()
+                                "path": $location.path(),
+                                "state": $state.current.name,
+                                "params": $stateParams
                             });
 
                             restheart.onUnauthenticated($location, $state);
@@ -333,9 +339,9 @@
             .module('restheart')
             .factory('RhLogic', RhLogic);
 
-    RhLogic.$inject = ['Restangular', 'localStorageService', '$location', 'restheart'];
+    RhLogic.$inject = ['Restangular', 'localStorageService', '$location', '$state', '$stateParams', 'restheart'];
 
-    function RhLogic(Restangular, localStorageService, $location, restheart) {
+    function RhLogic(Restangular, localStorageService, $location, $state, $stateParams, restheart) {
         return Restangular.withConfig(function (RestangularConfigurer) {
             RestangularConfigurer.setFullResponse(true);
 
@@ -359,13 +365,15 @@
                 if (response.status === 401) {
                     localStorageService.set('rh_autherror', {
                         'why': 'not_authenticated',
-                        'from': $location.path()
+                        "path": $location.path(),
+                        "state": $state.current.name,
+                        "params": $stateParams
                     });
-                    
+
                     restheart.onUnauthenticated();
                     return true; // handled
                 }
-                
+
                 //return true; // not handled
             }
         });

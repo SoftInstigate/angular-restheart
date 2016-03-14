@@ -5,9 +5,9 @@
             .module('restheart')
             .factory('RhLogic', RhLogic);
 
-    RhLogic.$inject = ['Restangular', 'localStorageService', '$location', 'restheart'];
+    RhLogic.$inject = ['Restangular', 'localStorageService', '$location', '$state', '$stateParams', 'restheart'];
 
-    function RhLogic(Restangular, localStorageService, $location, restheart) {
+    function RhLogic(Restangular, localStorageService, $location, $state, $stateParams, restheart) {
         return Restangular.withConfig(function (RestangularConfigurer) {
             RestangularConfigurer.setFullResponse(true);
 
@@ -31,13 +31,15 @@
                 if (response.status === 401) {
                     localStorageService.set('rh_autherror', {
                         'why': 'not_authenticated',
-                        'from': $location.path()
+                        "path": $location.path(),
+                        "state": $state.current.name,
+                        "params": $stateParams
                     });
-                    
+
                     restheart.onUnauthenticated();
                     return true; // handled
                 }
-                
+
                 //return true; // not handled
             }
         });
