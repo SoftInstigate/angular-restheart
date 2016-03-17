@@ -5,7 +5,7 @@ example/bower_components/
 # Created by https://www.gitignore.io/api/netbeans,intellij,eclipse,bower,node
 
 ### NetBeans ###
-nbproject/private/
+nbproject/
 build/
 nbbuild/
 dist/
