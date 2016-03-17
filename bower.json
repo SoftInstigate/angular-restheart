@@ -1,7 +1,7 @@
 {
   "name": "angular-restheart",
   "main": "dist/angular-restheart.min.js",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "homepage": "https://github.com/SoftInstigate/angular-restheart",
   "authors": [
     "SoftInstigate"
