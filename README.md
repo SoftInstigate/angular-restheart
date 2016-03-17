@@ -13,6 +13,24 @@ This module contains the following services:
 
 For more information on Restangular refer to its [documentation](https://github.com/mgonto/restangular)
 
+## Build and release a new version of this library
+
+> Note: this section is for library's developers only.
+
+1) set the VERSION number in **gulpfile.js** then
+
+```
+gulp build
+```
+
+The [gulp-bump](https://www.npmjs.com/package/gulp-bump) plugin automatically updates the version number in both **bower.json** and **package.json**.
+
+2) `git tag` with the same VERSION
+
+3) `git push` the new release.
+
+4) Increase the VERSION number to the next one and run `gulp build' again, so that it's ready for the successive release.
+
 ## Installation
 
 ### Bower
@@ -38,9 +56,9 @@ Inject the two services into your Controller.
 ```javascript
 .controller('MyCtrl', ['RhAuth', 'Rh',
         function (RhAuth, Rh) {
-        
+
         // here your logic
-        
+
         }
 });
 ```
@@ -58,15 +76,15 @@ You have to configure angular-restheart before using it.
 
 `onUnauthenticated(callback)` to set the callback function the be called on `401 - Unauthorized`
 
-`onTokenExpired(callback)` to set the callback function the be called on `401 - Unauthorized` due to token expiration 
+`onTokenExpired(callback)` to set the callback function the be called on `401 - Unauthorized` due to token expiration
 
-The callback functions are passed two arguments: `$location` and `$state`, that can be used for redirection. 
+The callback functions are passed two arguments: `$location` and `$state`, that can be used for redirection.
 
 Also, in case of errors the `rh_error` varible is set in the local storage:
 
 ```
 rh_error: {"why": ["forbidded" | "expired" "not_authenticated"], "path": <path_where_error_occurred>, "state": <state_name_where_error_occurred>, "params": <state_params_object> }
-``` 
+```
 
 ### Configuration Example
 ```javascript
@@ -139,7 +157,7 @@ The two main public methods are `signin()` and `signout()`.
                         console.log("Not Authorized");
                     }
                 })
-                   
+
             }
         }])
 ```
@@ -167,10 +185,9 @@ The two main public methods are `signin()` and `signout()`.
         function (Rh) {
             $scope.simpleRestangularRequest = function () {
                 Rh.all('/db/coll').getList().then(function (documents) { // returns a list of the collection documents
-                                console.log(documents); 
+                                console.log(documents);
                             })
                     }
 
         }])
 ```
-
