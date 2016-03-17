@@ -1,6 +1,6 @@
 # angular-restheart
 
-[AngularJS](https://angularjs.org) 1.x client module to handle RESTHeart API calls properly and easily.
+[AngularJS](https://angularjs.org) 1.x client module to handle [RESTHeart](http://restheart.org) API calls properly and easily.
 
 ## Overview
 
