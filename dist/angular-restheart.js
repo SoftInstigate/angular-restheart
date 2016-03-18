@@ -136,11 +136,18 @@
             var baseUrl = restheart.baseUrl;
 
             if (angular.isDefined(baseUrl) && baseUrl !== null) {
+                localStorageService.set('rh_baseUrl', baseUrl);
                 RestangularConfigurer.setBaseUrl(baseUrl);
-            } else { //default configuration
-                var _restheartUrl;
-                _restheartUrl = "http://" + $location.host() + ":8080";
-                RestangularConfigurer.setBaseUrl(_restheartUrl);
+            } else {
+                if(angular.isDefined(localStorageService.get('rh_baseUrl'))  ){
+                    baseUrl = localStorageService.get('rh_baseUrl');
+                    RestangularConfigurer.setBaseUrl(baseUrl);
+                } else{ //default configuration
+                    var _restheartUrl;
+                    _restheartUrl = "http://" + $location.host() + ":8080/_logic";
+                    RestangularConfigurer.setBaseUrl(_restheartUrl);
+                }
+
             }
 
             RestangularConfigurer.setErrorInterceptor(function (response, deferred, responseHandler) {
@@ -352,11 +359,18 @@
             var baseUrl = restheart.logicBaseUrl;
 
             if (angular.isDefined(baseUrl) && baseUrl !== null) {
+                localStorageService.set('rh_baseUrl', baseUrl);
                 RestangularConfigurer.setBaseUrl(baseUrl);
-            } else { //default configuration
-                var _restheartUrl;
-                _restheartUrl = "http://" + $location.host() + ":8080/_logic";
-                RestangularConfigurer.setBaseUrl(_restheartUrl);
+            } else {
+                if(angular.isDefined(localStorageService.get('rh_baseUrl'))  ){
+                    baseUrl = localStorageService.get('rh_baseUrl');
+                    RestangularConfigurer.setBaseUrl(baseUrl);
+                } else{ //default configuration
+                    var _restheartUrl;
+                    _restheartUrl = "http://" + $location.host() + ":8080/_logic";
+                    RestangularConfigurer.setBaseUrl(_restheartUrl);
+                }
+
             }
 
             RestangularConfigurer.setErrorInterceptor(function (response, deferred, responseHandler) {
