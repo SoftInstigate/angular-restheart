@@ -3,7 +3,7 @@
  * then run the 'gulp build' task to update both bower.json and package.json
  * See the README.md file for more information.
  */
-var VERSION = '1.1.6';
+var VERSION = '1.2.0';
 
 var gulp = require('gulp'),
    del = require('del'),
