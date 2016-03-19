@@ -3,18 +3,16 @@
 
     angular
             .module('restheart')
-            .service('RhAuth', RhAuth);
+            .service('RhAuth', ['$base64', '$http', 'localStorageService', 'RhLogic', '$q', 'Rh', 'restheart', RhAuth]);
 
-    RhAuth.$inject = ['$base64', '$http', 'localStorageService', 'RhLogic', '$q', 'Rh'];
+    function RhAuth($base64, $http, localStorageService, RhLogic, $q, Rh, restheart) {
 
-    function RhAuth($base64, $http, localStorageService, RhLogic, $q, Rh) {
-
-        this.setBaseUrl = function (url) {
-            Rh.setBaseUrl(url);
+        this.getBaseUrl = function () {
+            return restheart.getBaseUrl();
         };
 
-        this.setLogicBaseUrl = function (url) {
-            RhLogic.setBaseUrl(url);
+        this.getLogicBaseUrl = function () {
+            return restheart.getLogicBaseUrl();
         };
 
         this.setAuthHeader = function (userid, password) {
