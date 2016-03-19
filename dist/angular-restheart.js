@@ -6,43 +6,50 @@
         'base64',
         'restangular',
         'ui.router'
-    ])
-            .provider('restheart', function () {
+    ]).provider('restheart', restheart);
 
-                this.setBaseUrl = function (f) {
-                    this.baseUrl = f;
-                };
+    function restheart() {
 
-                this.setLogicBaseUrl = function (f) {
-                    this.logicBaseUrl = f;
-                };
+        this.setBaseUrl = function (f) {
+            this._baseUrl = f;
+        };
 
-                this.onForbidden = function (f) {
-                    this.onForbidden = f;
-                };
+        this.setLogicBaseUrl = function (f) {
+            this._logicBaseUrl = f;
+        };
+        
+        this.getBaseUrl = function() {
+            return this._baseUrl;
+        };
+        
+        this.getLogicBaseUrl = function() {
+            return this._logicBaseUrl;
+        };
 
-                this.onTokenExpired = function (f) {
-                    this.onTokenExpired = f;
-                };
+        this.onForbidden = function (f) {
+            this.onForbidden = f;
+        };
 
-                this.onUnauthenticated = function (f) {
-                    this.onUnauthenticated = f;
-                };
+        this.onTokenExpired = function (f) {
+            this.onTokenExpired = f;
+        };
 
-                this.$get = function () {
-                    return this;
-                };
+        this.onUnauthenticated = function (f) {
+            this.onUnauthenticated = f;
+        };
 
-            });
+        this.$get = function () {
+            return this;
+        };
+    };
+    
 })();
 (function () {
     'use strict';
 
     angular
             .module('restheart')
-            .config(configure);
-
-    configure.$inject = ['localStorageServiceProvider', 'RestangularProvider'];
+            .config(['localStorageServiceProvider', 'RestangularProvider', configure]);
 
     function configure(localStorageServiceProvider, RestangularProvider) {
         localStorageServiceProvider.setPrefix('rh');
@@ -93,9 +100,7 @@
 
     angular
             .module('restheart')
-            .factory('FRh', FRh);
-
-    FRh.$inject = ['Rh'];
+            .factory('FRh', ['Rh', FRh]);
 
     // Restangular service for API calling
     // with full response (also returns response headers)
@@ -111,9 +116,7 @@
 
     angular
             .module('restheart')
-            .factory('Rh', Rh);
-
-    Rh.$inject = ['Restangular', 'localStorageService', '$location', '$state', '$stateParams', 'restheart', '$http'];
+            .factory('Rh', ['Restangular', 'localStorageService', '$location', '$state', '$stateParams', 'restheart', '$http', Rh]);
 
     // Restangular service for API calling
     // also handles auth token expiration
@@ -133,21 +136,16 @@
 
         return Restangular.withConfig(function (RestangularConfigurer) {
 
-            var baseUrl = restheart.baseUrl;
+            var baseUrl = restheart.getBaseUrl();
 
             if (angular.isDefined(baseUrl) && baseUrl !== null) {
                 localStorageService.set('rh_baseUrl', baseUrl);
                 RestangularConfigurer.setBaseUrl(baseUrl);
+            } else if (angular.isDefined(localStorageService.get('rh_baseUrl'))) {
+                baseUrl = localStorageService.get('rh_baseUrl');
+                RestangularConfigurer.setBaseUrl(baseUrl);
             } else {
-                if(angular.isDefined(localStorageService.get('rh_baseUrl'))  ){
-                    baseUrl = localStorageService.get('rh_baseUrl');
-                    RestangularConfigurer.setBaseUrl(baseUrl);
-                } else{ //default configuration
-                    var _restheartUrl;
-                    _restheartUrl = "http://" + $location.host() + ":8080/_logic";
-                    RestangularConfigurer.setBaseUrl(_restheartUrl);
-                }
-
+                throw "Rh ERROR: baseUrl not found with localStorageService.get('rh_baseUrl')";
             }
 
             RestangularConfigurer.setErrorInterceptor(function (response, deferred, responseHandler) {
@@ -234,18 +232,16 @@
 
     angular
             .module('restheart')
-            .service('RhAuth', RhAuth);
+            .service('RhAuth', ['$base64', '$http', 'localStorageService', 'RhLogic', '$q', 'Rh', 'restheart', RhAuth]);
 
-    RhAuth.$inject = ['$base64', '$http', 'localStorageService', 'RhLogic', '$q', 'Rh'];
+    function RhAuth($base64, $http, localStorageService, RhLogic, $q, Rh, restheart) {
 
-    function RhAuth($base64, $http, localStorageService, RhLogic, $q, Rh) {
-
-        this.setBaseUrl = function (url) {
-            Rh.setBaseUrl(url);
+        this.getBaseUrl = function () {
+            return restheart.getBaseUrl();
         };
 
-        this.setLogicBaseUrl = function (url) {
-            RhLogic.setBaseUrl(url);
+        this.getLogicBaseUrl = function () {
+            return restheart.getLogicBaseUrl();
         };
 
         this.setAuthHeader = function (userid, password) {
@@ -356,21 +352,16 @@
         return Restangular.withConfig(function (RestangularConfigurer) {
             RestangularConfigurer.setFullResponse(true);
 
-            var baseUrl = restheart.logicBaseUrl;
+            var logicBaseUrl = restheart.getLogicBaseUrl();
 
-            if (angular.isDefined(baseUrl) && baseUrl !== null) {
-                localStorageService.set('rh_baseUrl', baseUrl);
-                RestangularConfigurer.setBaseUrl(baseUrl);
+            if (angular.isDefined(logicBaseUrl) && logicBaseUrl !== null) {
+                localStorageService.set('rh_logicBaseUrl', logicBaseUrl);
+                RestangularConfigurer.setBaseUrl(logicBaseUrl);
+            } else if (angular.isDefined(localStorageService.get('rh_logicBaseUrl'))) {
+                logicBaseUrl = localStorageService.get('rh_logicBaseUrl');
+                RestangularConfigurer.setBaseUrl(logicBaseUrl);
             } else {
-                if(angular.isDefined(localStorageService.get('rh_baseUrl'))  ){
-                    baseUrl = localStorageService.get('rh_baseUrl');
-                    RestangularConfigurer.setBaseUrl(baseUrl);
-                } else{ //default configuration
-                    var _restheartUrl;
-                    _restheartUrl = "http://" + $location.host() + ":8080/_logic";
-                    RestangularConfigurer.setBaseUrl(_restheartUrl);
-                }
-
+                throw "RhLogic ERROR: logicBaseUrl not found with localStorageService.get('rh_logicBaseUrl')";
             }
 
             RestangularConfigurer.setErrorInterceptor(function (response, deferred, responseHandler) {
