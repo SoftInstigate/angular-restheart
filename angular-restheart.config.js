@@ -3,9 +3,7 @@
 
     angular
             .module('restheart')
-            .config(configure);
-
-    configure.$inject = ['localStorageServiceProvider', 'RestangularProvider'];
+            .config(['localStorageServiceProvider', 'RestangularProvider', configure]);
 
     function configure(localStorageServiceProvider, RestangularProvider) {
         localStorageServiceProvider.setPrefix('rh');
