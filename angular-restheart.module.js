@@ -11,11 +11,19 @@
     function restheart() {
 
         this.setBaseUrl = function (f) {
-            this.baseUrl = f;
+            this._baseUrl = f;
         };
 
         this.setLogicBaseUrl = function (f) {
-            this.logicBaseUrl = f;
+            this._logicBaseUrl = f;
+        };
+        
+        this.getBaseUrl = function() {
+            return this._baseUrl;
+        };
+        
+        this.getLogicBaseUrl = function() {
+            return this._logicBaseUrl;
         };
 
         this.onForbidden = function (f) {
