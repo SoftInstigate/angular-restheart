@@ -3,9 +3,7 @@
 
     angular
             .module('restheart')
-            .factory('FRh', FRh);
-
-    FRh.$inject = ['Rh'];
+            .factory('FRh', ['Rh', FRh]);
 
     // Restangular service for API calling
     // with full response (also returns response headers)
