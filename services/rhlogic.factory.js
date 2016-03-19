@@ -11,21 +11,16 @@
         return Restangular.withConfig(function (RestangularConfigurer) {
             RestangularConfigurer.setFullResponse(true);
 
-            var baseUrl = restheart.logicBaseUrl;
+            var logicBaseUrl = restheart.getLogicBaseUrl();
 
-            if (angular.isDefined(baseUrl) && baseUrl !== null) {
-                localStorageService.set('rh_baseUrl', baseUrl);
-                RestangularConfigurer.setBaseUrl(baseUrl);
+            if (angular.isDefined(logicBaseUrl) && logicBaseUrl !== null) {
+                localStorageService.set('rh_logicBaseUrl', logicBaseUrl);
+                RestangularConfigurer.setBaseUrl(logicBaseUrl);
+            } else if (angular.isDefined(localStorageService.get('rh_logicBaseUrl'))) {
+                logicBaseUrl = localStorageService.get('rh_logicBaseUrl');
+                RestangularConfigurer.setBaseUrl(logicBaseUrl);
             } else {
-                if(angular.isDefined(localStorageService.get('rh_baseUrl'))  ){
-                    baseUrl = localStorageService.get('rh_baseUrl');
-                    RestangularConfigurer.setBaseUrl(baseUrl);
-                } else{ //default configuration
-                    var _restheartUrl;
-                    _restheartUrl = "http://" + $location.host() + ":8080/_logic";
-                    RestangularConfigurer.setBaseUrl(_restheartUrl);
-                }
-
+                throw "RhLogic ERROR: logicBaseUrl not found with localStorageService.get('rh_logicBaseUrl')";
             }
 
             RestangularConfigurer.setErrorInterceptor(function (response, deferred, responseHandler) {
