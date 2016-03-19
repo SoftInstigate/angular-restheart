@@ -6,32 +6,33 @@
         'base64',
         'restangular',
         'ui.router'
-    ])
-            .provider('restheart', function () {
+    ]).provider('restheart', restheart);
 
-                this.setBaseUrl = function (f) {
-                    this.baseUrl = f;
-                };
+    function restheart() {
 
-                this.setLogicBaseUrl = function (f) {
-                    this.logicBaseUrl = f;
-                };
+        this.setBaseUrl = function (f) {
+            this.baseUrl = f;
+        };
 
-                this.onForbidden = function (f) {
-                    this.onForbidden = f;
-                };
+        this.setLogicBaseUrl = function (f) {
+            this.logicBaseUrl = f;
+        };
 
-                this.onTokenExpired = function (f) {
-                    this.onTokenExpired = f;
-                };
+        this.onForbidden = function (f) {
+            this.onForbidden = f;
+        };
 
-                this.onUnauthenticated = function (f) {
-                    this.onUnauthenticated = f;
-                };
+        this.onTokenExpired = function (f) {
+            this.onTokenExpired = f;
+        };
 
-                this.$get = function () {
-                    return this;
-                };
+        this.onUnauthenticated = function (f) {
+            this.onUnauthenticated = f;
+        };
 
-            });
+        this.$get = function () {
+            return this;
+        };
+    };
+    
 })();
