@@ -38,6 +38,10 @@
             this.onUnauthenticated = f;
         };
 
+        this.onNetworkError = function (f) {
+            this.onNetworkError = f;
+        };
+
         this.$get = function () {
             return this;
         };

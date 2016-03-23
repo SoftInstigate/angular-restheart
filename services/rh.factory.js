@@ -39,7 +39,8 @@
                 // check if session expired
                 var te = handleTokenExpiration(response);
                 var f = handleForbidden(response);
-                return !(te || f); // if handled --> false
+                var ne = handleNetworkError(response);
+                return !(te || f || ne); // if handled --> false
             });
 
             RestangularConfigurer.setRequestInterceptor(function (elem, operation) {
@@ -110,6 +111,24 @@
                 }
 
                 return false; // not handled
+            }
+
+            function handleNetworkError(response) {
+                if (response.status === -1) {
+                    localStorageService.set('rh_networkError', {
+                        'why': 'network_error',
+                        "path": $location.path(),
+                        "state": $state.current.name,
+                        "params": $stateParams
+                    });
+                    // call configured call back, if any
+                    if (angular.isFunction(restheart.onNetworkError)) {
+                        restheart.onNetworkError($location, $state);
+                    }
+                    return true; // handled
+                }
+
+                //return true; // not handled
             }
         });
     }
