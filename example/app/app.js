@@ -28,6 +28,14 @@ angular.module('myApp', [
             }
         );
 
+        restheartProvider.onNetworkError(
+            function () {
+                alert("Network error, the server is unreachable. It may be due to network problems or the server is offline - User Custom Function");
+                sessionStorage.removeItem("rh.rh_authtoken");
+                window.location.href = '../app/#/signin';
+            }
+        );
+
 
     })
 
