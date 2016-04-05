@@ -1,6 +1,6 @@
 {
   "name": "angular-restheart",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "AngularJs module to handle RESTHeart API properly and easily",
   "main": "angular-restheart.module.js",
   "directories": {
