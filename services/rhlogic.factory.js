@@ -39,8 +39,10 @@
                         "state": $state.current.name,
                         "params": $stateParams
                     });
-
-                    restheart.onUnauthenticated();
+                    // call configured call back, if any
+                    if (angular.isFunction(restheart.onUnauthenticated)) {
+                        restheart.onUnauthenticated();
+                    }
                     return true; // handled
                 }
 

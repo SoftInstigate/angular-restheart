@@ -219,8 +219,10 @@
                                 "state": $state.current.name,
                                 "params": $stateParams
                             });
-
-                            restheart.onUnauthenticated($location, $state);
+                            // call configured call back, if any
+                            if (angular.isFunction(restheart.onUnauthenticated)) {
+                                restheart.onUnauthenticated($location, $state);
+                            }
                         }
                     }
 
@@ -403,8 +405,10 @@
                         "state": $state.current.name,
                         "params": $stateParams
                     });
-
-                    restheart.onUnauthenticated();
+                    // call configured call back, if any
+                    if (angular.isFunction(restheart.onUnauthenticated)) {
+                        restheart.onUnauthenticated();
+                    }
                     return true; // handled
                 }
 
