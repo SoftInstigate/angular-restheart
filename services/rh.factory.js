@@ -36,11 +36,9 @@
             }
 
             RestangularConfigurer.setErrorInterceptor(function (response, deferred, responseHandler) {
-                // check if session expired
-                var te = handleTokenExpiration(response);
-                var f = handleForbidden(response);
-                var ne = handleNetworkError(response);
-                return !(te || f || ne); // if handled --> false
+                handleTokenExpiration(response);
+                handleForbidden(response);
+                handleNetworkError(response);
             });
 
             RestangularConfigurer.setRequestInterceptor(function (elem, operation) {
@@ -71,9 +69,7 @@
                     if (angular.isFunction(restheart.onTokenExpired)) {
                         restheart.onTokenExpired($location, $state);
                     }
-                    return true; // handled
                 }
-                return false; // not handled
             }
 
             function handleForbidden(response) {
@@ -108,11 +104,7 @@
                             }
                         }
                     }
-
-                    return true; // handled
                 }
-
-                return false; // not handled
             }
 
             function handleNetworkError(response) {
@@ -127,10 +119,7 @@
                     if (angular.isFunction(restheart.onNetworkError)) {
                         restheart.onNetworkError($location, $state);
                     }
-                    return true; // handled
                 }
-
-                //return true; // not handled
             }
         });
     }

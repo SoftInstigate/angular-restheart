@@ -153,11 +153,9 @@
             }
 
             RestangularConfigurer.setErrorInterceptor(function (response, deferred, responseHandler) {
-                // check if session expired
-                var te = handleTokenExpiration(response);
-                var f = handleForbidden(response);
-                var ne = handleNetworkError(response);
-                return !(te || f || ne); // if handled --> false
+                handleTokenExpiration(response);
+                handleForbidden(response);
+                handleNetworkError(response);
             });
 
             RestangularConfigurer.setRequestInterceptor(function (elem, operation) {
@@ -188,9 +186,7 @@
                     if (angular.isFunction(restheart.onTokenExpired)) {
                         restheart.onTokenExpired($location, $state);
                     }
-                    return true; // handled
                 }
-                return false; // not handled
             }
 
             function handleForbidden(response) {
@@ -225,11 +221,7 @@
                             }
                         }
                     }
-
-                    return true; // handled
                 }
-
-                return false; // not handled
             }
 
             function handleNetworkError(response) {
@@ -244,10 +236,7 @@
                     if (angular.isFunction(restheart.onNetworkError)) {
                         restheart.onNetworkError($location, $state);
                     }
-                    return true; // handled
                 }
-
-                //return true; // not handled
             }
         });
     }
@@ -256,8 +245,8 @@
     'use strict';
 
     angular
-            .module('restheart')
-            .service('RhAuth', ['$base64', '$http', 'localStorageService', 'RhLogic', '$q', 'Rh', 'restheart', RhAuth]);
+        .module('restheart')
+        .service('RhAuth', ['$base64', '$http', 'localStorageService', 'RhLogic', '$q', 'Rh', 'restheart', RhAuth]);
 
     function RhAuth($base64, $http, localStorageService, RhLogic, $q, Rh, restheart) {
 
@@ -313,7 +302,7 @@
             return !(angular.isUndefined(authHeader) || authHeader === null);
         };
 
-        this.signin = function (id, password, errorCallback) {
+        this.signin = function (id, password) {
             var that = this;
             return $q(function (resolve, reject) {
                 that.clearAuthInfo();
@@ -322,26 +311,26 @@
                     nocache: new Date().getTime()
                 };
                 RhLogic.one('roles', id)
-                        .get(apiOptions)
-                        .then(function (userRoles) {
-                            var authToken = userRoles.headers('Auth-Token');
-                            if (authToken === null) {
-                                that.clearAuthInfo();
-                                resolve(false);
-                                return;
-                            }
-                            that.saveAuthInfo(id, authToken, userRoles.data.roles);
-                            that.setAuthHeader(id, authToken);
-                            resolve(true);
-                        },
-                                function (response) {
-                                    if (response.status === 401) {
-                                        resolve(false);
-                                    } else {
-                                        reject(response);
-                                    }
+                    .get(apiOptions)
+                    .then(function (userRoles) {
+                        var authToken = userRoles.headers('Auth-Token');
+                        if (authToken === null) {
+                            that.clearAuthInfo();
+                            resolve(false);
+                            return;
+                        }
+                        that.saveAuthInfo(id, authToken, userRoles.data.roles);
+                        that.setAuthHeader(id, authToken);
+                        resolve(true);
+                    },
+                    function (response) {
+                        if (response.status === 401) {
+                            resolve(false);
+                        } else {
+                            reject(response);
+                        }
 
-                                });
+                    });
             });
         };
 
@@ -390,11 +379,8 @@
             }
 
             RestangularConfigurer.setErrorInterceptor(function (response, deferred, responseHandler) {
-                // check if session expired
                 var f = handleUnauthenticated(response);
                 var ne = handleNetworkError(response);
-                return !(ne || f); // if handled --> false
-                return f; // if handled --> false
             });
 
             function handleUnauthenticated(response) {
@@ -409,10 +395,7 @@
                     if (angular.isFunction(restheart.onUnauthenticated)) {
                         restheart.onUnauthenticated();
                     }
-                    return true; // handled
                 }
-
-                //return true; // not handled
             }
 
             function handleNetworkError(response) {
@@ -427,10 +410,7 @@
                     if (angular.isFunction(restheart.onNetworkError)) {
                         restheart.onNetworkError($location, $state);
                     }
-                    return true; // handled
                 }
-
-                //return true; // not handled
             }
         });
     }

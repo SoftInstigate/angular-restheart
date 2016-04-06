@@ -24,11 +24,8 @@
             }
 
             RestangularConfigurer.setErrorInterceptor(function (response, deferred, responseHandler) {
-                // check if session expired
                 var f = handleUnauthenticated(response);
                 var ne = handleNetworkError(response);
-                return !(ne || f); // if handled --> false
-                return f; // if handled --> false
             });
 
             function handleUnauthenticated(response) {
@@ -43,10 +40,7 @@
                     if (angular.isFunction(restheart.onUnauthenticated)) {
                         restheart.onUnauthenticated();
                     }
-                    return true; // handled
                 }
-
-                //return true; // not handled
             }
 
             function handleNetworkError(response) {
@@ -61,10 +55,7 @@
                     if (angular.isFunction(restheart.onNetworkError)) {
                         restheart.onNetworkError($location, $state);
                     }
-                    return true; // handled
                 }
-
-                //return true; // not handled
             }
         });
     }

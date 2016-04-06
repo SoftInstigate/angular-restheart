@@ -2,8 +2,8 @@
     'use strict';
 
     angular
-            .module('restheart')
-            .service('RhAuth', ['$base64', '$http', 'localStorageService', 'RhLogic', '$q', 'Rh', 'restheart', RhAuth]);
+        .module('restheart')
+        .service('RhAuth', ['$base64', '$http', 'localStorageService', 'RhLogic', '$q', 'Rh', 'restheart', RhAuth]);
 
     function RhAuth($base64, $http, localStorageService, RhLogic, $q, Rh, restheart) {
 
@@ -59,7 +59,7 @@
             return !(angular.isUndefined(authHeader) || authHeader === null);
         };
 
-        this.signin = function (id, password, errorCallback) {
+        this.signin = function (id, password) {
             var that = this;
             return $q(function (resolve, reject) {
                 that.clearAuthInfo();
@@ -68,26 +68,26 @@
                     nocache: new Date().getTime()
                 };
                 RhLogic.one('roles', id)
-                        .get(apiOptions)
-                        .then(function (userRoles) {
-                            var authToken = userRoles.headers('Auth-Token');
-                            if (authToken === null) {
-                                that.clearAuthInfo();
-                                resolve(false);
-                                return;
-                            }
-                            that.saveAuthInfo(id, authToken, userRoles.data.roles);
-                            that.setAuthHeader(id, authToken);
-                            resolve(true);
-                        },
-                                function (response) {
-                                    if (response.status === 401) {
-                                        resolve(false);
-                                    } else {
-                                        reject(response);
-                                    }
+                    .get(apiOptions)
+                    .then(function (userRoles) {
+                        var authToken = userRoles.headers('Auth-Token');
+                        if (authToken === null) {
+                            that.clearAuthInfo();
+                            resolve(false);
+                            return;
+                        }
+                        that.saveAuthInfo(id, authToken, userRoles.data.roles);
+                        that.setAuthHeader(id, authToken);
+                        resolve(true);
+                    },
+                    function (response) {
+                        if (response.status === 401) {
+                            resolve(false);
+                        } else {
+                            reject(response);
+                        }
 
-                                });
+                    });
             });
         };
 
