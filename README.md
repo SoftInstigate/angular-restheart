@@ -29,8 +29,6 @@ The [gulp-bump](https://www.npmjs.com/package/gulp-bump) plugin automatically up
 
 3) `git push` the new release.
 
-4) Increase the VERSION number to the next one and run `gulp build' again, so that it's ready for the successive release.
-
 ## Installation
 
 ### Bower
