@@ -38,7 +38,7 @@
                     });
                     // call configured call back, if any
                     if (angular.isFunction(restheart.onUnauthenticated)) {
-                        restheart.onUnauthenticated();
+                        restheart.onUnauthenticated($location, $state);
                     }
                 }
             }
