@@ -32,10 +32,9 @@
                     }
                 }
 
-                extractedData._returned = data._returned;
-                extractedData._size = data._size;
-                extractedData._total_pages = data._total_pages;
-                extractedData._links = data._links;
+                for(var propertyName in data) {
+                    extractedData[propertyName] = data[propertyName];
+                }
             } else {
                 extractedData = data;
             }
