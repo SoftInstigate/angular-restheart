@@ -358,9 +358,7 @@
 
     angular
             .module('restheart')
-            .factory('RhLogic', RhLogic);
-
-    RhLogic.$inject = ['Restangular', 'localStorageService', '$location', '$state', '$stateParams', 'restheart'];
+            .factory('RhLogic', ['Restangular', 'localStorageService', '$location', '$state', '$stateParams', 'restheart', RhLogic]);
 
     function RhLogic(Restangular, localStorageService, $location, $state, $stateParams, restheart) {
         return Restangular.withConfig(function (RestangularConfigurer) {
