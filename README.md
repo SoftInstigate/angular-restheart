@@ -1,5 +1,8 @@
 # angular-restheart
 
+[![npm](https://img.shields.io/npm/v/angular-restheart.svg?maxAge=2592000)](https://www.npmjs.com/package/angular-restheart)
+[![Bower](https://img.shields.io/bower/v/angular-restheart.svg?maxAge=2592000)](http://bower.io/search/?q=restheart)
+
 [AngularJS](https://angularjs.org) 1.x client module to handle [RESTHeart](http://restheart.org) API calls properly and easily.
 
 ## Overview
